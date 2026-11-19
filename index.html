@@ -10,10 +10,15 @@
   --bg:#f4efe6; --card:#fdfaf5; --ink:#3d362f; --muted:#9b8f82; --line:#e9e1d5; --soft:#f6f0e7;
   --accent:#a3825f; --accent-soft:#efe5d8; --warn:#c06c55; --mark:#fff0b3;
   --radius:24px; --shadow:0 2px 14px rgba(120,90,50,.07);
+  /* 重點標記：底色 / 文字 / 左側色條 */
+  --hy:#fbe8a6; --hy-t:#5a4300; --hy-b:#d9a800;
+  --hp:#fbd5de; --hp-t:#7a1d35; --hp-b:#d9577a;
+  --hg:#d3ecd6; --hg-t:#1d5a2b; --hg-b:#4c9b5c;
 }
 @media (prefers-color-scheme:dark){
   :root{--bg:#1c1915;--card:#26211b;--ink:#efe8de;--muted:#a3988b;--line:#3a332a;--soft:#2e2820;
-  --accent:#c9a47e;--accent-soft:#3a3025;--warn:#e08d74;--mark:#5a4a12;}
+  --accent:#c9a47e;--accent-soft:#3a3025;--warn:#e08d74;--mark:#5a4a12;
+  --hy:#4a3b0c;--hy-t:#ffe7a0;--hy-b:#e8b923; --hp:#4d1e2a;--hp-t:#ffd0dc;--hp-b:#e46b8d; --hg:#1b3f25;--hg-t:#c8f0cf;--hg-b:#5fb873;}
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);
@@ -35,7 +40,8 @@ nav{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--ca
 nav button{border:0;background:none;padding:9px 4px;border-radius:999px;cursor:pointer;color:var(--muted);white-space:nowrap;font-size:16px;letter-spacing:.06em}
 nav button.on{background:var(--accent);color:#fff;font-weight:600}
 .search-wrap{position:relative}
-.search-wrap::before{content:"🔍";position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.8}
+.search-wrap .ic{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);width:20px;height:20px}
+.ic{width:1.15em;height:1.15em;fill:currentColor;flex:0 0 auto;vertical-align:-.2em}
 .search{width:100%;padding:11px 16px 11px 44px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:16px;box-shadow:var(--shadow)}
 .search::placeholder{color:var(--muted)}
 main{max-width:760px;margin:0 auto;padding:16px 16px 120px}
@@ -57,8 +63,11 @@ main{max-width:760px;margin:0 auto;padding:16px 16px 120px}
 .et{flex:1;min-width:0}
 .et .tt{font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .et .st{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.er{color:var(--warn);font-weight:700;font-size:17px;white-space:nowrap;font-variant-numeric:tabular-nums}
-.er .chev{display:inline-block;color:var(--muted);font-weight:400;margin-left:6px;transition:transform .2s}
+.er{color:var(--warn);font-weight:700;font-size:17px;white-space:nowrap;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:2px}
+.er .ic{width:17px;height:17px}
+.day-h .ic{width:14px;height:14px;vertical-align:-2px}
+.er .chev{display:inline-flex;color:var(--muted);font-weight:400;margin-left:4px;transition:transform .2s}
+.er .chev .ic{width:22px;height:22px}
 .entry.open .chev{transform:rotate(90deg)}
 .entry-body{display:none;padding:0 14px 14px}
 .entry.open .entry-body{display:block}
@@ -70,7 +79,9 @@ main{max-width:760px;margin:0 auto;padding:16px 16px 120px}
 .thumbs{display:flex;gap:8px;overflow-x:auto;margin-top:10px}
 .thumbs img{height:70px;border-radius:12px;border:1px solid var(--line);cursor:zoom-in;object-fit:cover}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.btn{border:1px solid var(--line);background:var(--card);padding:7px 15px;border-radius:999px;cursor:pointer;font-size:14px;text-decoration:none;color:var(--ink);display:inline-block}
+.btn{border:1px solid var(--line);background:var(--card);padding:7px 15px;border-radius:999px;cursor:pointer;font-size:14px;text-decoration:none;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn .ic{width:17px;height:17px}
+.icon-btn .ic{width:18px;height:18px;vertical-align:-4px}
 .btn:hover{border-color:var(--accent);color:var(--accent)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
 .btn.primary:hover{filter:brightness(1.06);color:#fff}
@@ -160,10 +171,13 @@ textarea.auto{overflow:hidden;resize:none;min-height:46px;line-height:1.6}
 .pt-row[data-lv="1"] .dot{color:var(--muted)}
 .pt-txt,.hl-txt{flex:1;min-width:0;outline:none;padding:5px 2px;line-height:1.6;font-size:16px;word-break:break-word;-webkit-user-select:text;user-select:text}
 .pt-txt:empty::before,.hl-txt:empty::before{content:attr(data-ph);color:var(--muted)}
-.pt-btn{width:34px;height:34px;padding:0;flex:0 0 auto;color:var(--muted);font-size:14px}
-.hl-row{border:0;color:#3d362f}
-@media (prefers-color-scheme:dark){.hl-row{color:var(--ink)}}
-.cdot{width:26px;height:26px;margin-top:4px;border-radius:50%;border:2px solid rgba(0,0,0,.18);cursor:pointer;flex:0 0 auto;background:conic-gradient(#fbeaa6 0 33%,#f8d5dc 0 66%,#d3ebd5 0)}
+.pt-btn{width:34px;height:34px;padding:0;flex:0 0 auto;color:var(--muted);display:grid;place-items:center}
+.pt-btn .ic{width:18px;height:18px}
+.hl-row .pt-btn{background:transparent;border-color:transparent;color:inherit;opacity:.65}
+.e-tools button{display:inline-flex;align-items:center;gap:5px}
+.e-add{display:inline-flex;align-items:center;gap:4px}
+.hl-row{border:0;border-left:5px solid transparent;font-weight:600}
+.cdot{width:26px;height:26px;margin-top:4px;border-radius:50%;border:2px solid var(--card);cursor:pointer;flex:0 0 auto;background:conic-gradient(var(--hy-b) 0 33%,var(--hp-b) 0 66%,var(--hg-b) 0)}
 .kws{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px}
 .kwc{display:inline-flex;align-items:center;gap:2px;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:3px 4px 3px 12px;font-size:14px}
 .kwc button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px;padding:0 6px}
@@ -173,29 +187,40 @@ textarea.auto{overflow:hidden;resize:none;min-height:46px;line-height:1.6}
 .e-bar .btn{flex:1;padding:12px;font-size:16px}
 .e-bar .btn.primary{flex:2}
 .e-hint{font-size:12.5px;color:var(--muted);font-weight:400;margin-left:6px}
-/* 重點標記顏色：黃=重點、粉=易錯、綠=補充 */
-.hl-y{background:#fbeaa6}.hl-p{background:#f8d5dc}.hl-g{background:#d3ebd5}
-@media (prefers-color-scheme:dark){.hl-y{background:#5c4b0e}.hl-p{background:#5a2433}.hl-g{background:#1f4a2b}}
-mark.hl-y,mark.hl-p,mark.hl-g{color:inherit;border-radius:3px;padding:0 1px}
+/* 重點標記顏色：黃=重點、粉=易錯、綠=補充（底色淡、文字深，深色模式反過來） */
+.hl-y{background:var(--hy);color:var(--hy-t)}.hl-p{background:var(--hp);color:var(--hp-t)}.hl-g{background:var(--hg);color:var(--hg-t)}
+mark.hl-y,mark.hl-p,mark.hl-g{border-radius:4px;padding:1px 2px;font-weight:600}
 .hl-box{border:1px solid var(--line);border-radius:16px;padding:8px 10px;margin:4px 0 10px;background:var(--card)}
-.hl-box .t{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:2px;letter-spacing:.04em}
-.hl{display:flex;gap:6px;align-items:flex-start;padding:7px 10px;border-radius:12px;margin:5px 0;font-size:15px;font-weight:500;line-height:1.5;color:#3d362f}
-@media (prefers-color-scheme:dark){.hl{color:var(--ink)}.hl small,.hl button{color:var(--muted)}}
+.hl-box .t{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:2px;letter-spacing:.04em}
+.hl-box .t .ic{color:var(--hy-b);width:16px;height:16px}
+.hl{display:flex;gap:6px;align-items:flex-start;padding:8px 10px 8px 12px;border-radius:12px;margin:6px 0;font-size:15px;font-weight:600;line-height:1.5;border-left:5px solid transparent}
+.hl.hl-y,.hl-row.hl-y{border-left-color:var(--hy-b)}.hl.hl-p,.hl-row.hl-p{border-left-color:var(--hp-b)}.hl.hl-g,.hl-row.hl-g{border-left-color:var(--hg-b)}
 .hl span{flex:1}
-.hl small{color:#8a7e70;font-weight:400}
-.hl button{border:0;background:none;color:#8a7e70;cursor:pointer;padding:0 4px;font-size:17px;line-height:1.3}
-li[class^=hl-]{border-radius:8px;padding:1px 6px}
-.star{border:0;background:none;cursor:pointer;color:var(--muted);padding:0 3px;font-size:16px;vertical-align:baseline}
-.star.on{color:#c98f00}
-#selTool{position:fixed;z-index:70;background:var(--ink);border-radius:999px;padding:6px;display:flex;gap:6px;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.hl small{font-weight:400;opacity:.75}
+.hl button{border:0;background:none;color:inherit;opacity:.6;cursor:pointer;padding:2px;display:flex}
+.hl button .ic{width:18px;height:18px}
+li[class^=hl-]{border-radius:8px;padding:2px 6px}
+.star{border:0;background:none;cursor:pointer;color:var(--muted);padding:0 3px;vertical-align:-3px;display:inline-flex}
+.star .ic{width:18px;height:18px}
+.star.on{color:var(--hy-b)}
+li[class^=hl-] .star.on{color:inherit}
+/* 選字後的標記工具列：固定在畫面底部，避免跟 iPhone 的「拷貝／查詢」選單重疊 */
+#selTool{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:70;max-width:520px;margin:0 auto;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px;display:flex;gap:7px;align-items:center;box-shadow:0 10px 30px rgba(40,25,10,.25)}
 #selTool[hidden]{display:none}
-#selTool span{color:var(--bg);padding:0 2px 0 8px}
-#selTool button{border:0;border-radius:999px;padding:7px 14px;cursor:pointer;font-size:14px;color:#3d362f;font-weight:600}
+#selTool .lab{display:flex;align-items:center;gap:4px;color:var(--muted);font-size:13.5px;padding:0 4px 0 8px;white-space:nowrap}
+#selTool .lab .ic{width:18px;height:18px}
+#selTool button{flex:1;border:0;border-left:5px solid transparent;border-radius:999px;padding:10px 6px;cursor:pointer;font-size:15px;font-weight:700}
+#selTool button.hl-y{border-color:var(--hy-b)}#selTool button.hl-p{border-color:var(--hp-b)}#selTool button.hl-g{border-color:var(--hg-b)}
 #updateBar{position:fixed;left:50%;transform:translateX(-50%);top:calc(12px + env(safe-area-inset-top));z-index:60;
   width:min(460px,calc(100vw - 24px));background:var(--card);border:1px solid var(--accent);border-radius:20px;
   box-shadow:0 8px 28px rgba(60,40,20,.18);padding:12px 14px;display:flex;align-items:center;gap:10px}
 #updateBar[hidden]{display:none}
 #updateBar .txt{flex:1;font-size:14px;line-height:1.45}
+#updateBar .txt .ic{color:var(--accent);margin-right:4px}
+.card h3 .ic,.section-title h2 .ic{color:var(--accent);margin-right:6px}
+.drop .ic{width:28px;height:28px;display:block;margin:0 auto 4px;color:var(--accent)}
+.ref .src .ic{width:14px;height:14px;vertical-align:-2px;margin-right:3px}
 #updateBar .txt small{display:block;color:var(--muted);font-size:12px}
 #viewer{width:auto;max-width:96vw;background:#000;border-radius:14px}
 #viewer img{display:block;max-width:96vw;max-height:88vh}
@@ -214,15 +239,15 @@ li[class^=hl-]{border-radius:8px;padding:1px 6px}
       <button data-v="refs">教科書</button>
       <button data-v="settings">設定</button>
     </nav>
-    <div class="search-wrap"><input class="search" id="q" type="search" placeholder="搜尋筆記：標題、重點、關鍵字、分類…"></div>
+    <div class="search-wrap"><i data-ic="search"></i><input class="search" id="q" type="search" placeholder="搜尋筆記：標題、重點、關鍵字、分類…"></div>
   </div>
 </header>
 <main id="app"></main>
 <button class="fab" id="fab">＋ 新增筆記</button>
 <div id="toast"></div>
-<div id="selTool" hidden><span>🖍</span><button data-c="y" class="hl-y">重點</button><button data-c="p" class="hl-p">易錯</button><button data-c="g" class="hl-g">補充</button></div>
+<div id="selTool" hidden><span class="lab"><i data-ic="brush"></i>標記為</span><button data-c="y" class="hl-y">重點</button><button data-c="p" class="hl-p">易錯</button><button data-c="g" class="hl-g">補充</button></div>
 <div id="updateBar" hidden>
-  <div class="txt">🎉 有新版本可以更新<small id="updateVer"></small></div>
+  <div class="txt"><i data-ic="refresh"></i>有新版本可以更新<small id="updateVer"></small></div>
   <button class="btn" id="updLater">稍後</button>
   <button class="btn primary" id="updNow">更新</button>
 </div>
@@ -235,7 +260,7 @@ li[class^=hl-]{border-radius:8px;padding:1px 6px}
     <div><label>科目（選填）</label><input type="text" id="addCtx" placeholder="例如：統計學、第5週"></div>
   </div>
   <label>拍照或選擇照片（PPT、白板、講義）</label>
-  <div class="drop" id="drop">📷 點這裡選照片<br><span class="notice">可一次多張，同主題的投影片會自動合併</span></div>
+  <div class="drop" id="drop"><i data-ic="image"></i>點這裡選照片<br><span class="notice">可一次多張，同主題的投影片會自動合併</span></div>
   <input type="file" id="file" accept="image/*" multiple hidden>
   <input type="file" id="cam" accept="image/*" capture="environment" hidden>
   <div class="previews" id="previews"></div>
@@ -243,9 +268,9 @@ li[class^=hl-]{border-radius:8px;padding:1px 6px}
   <textarea id="addText" placeholder="上課聽到的重點、自己的想法…"></textarea>
   <div class="progress" id="addProg"></div>
   <div class="foot">
-    <button class="btn" id="btnCam">📷 拍照</button>
+    <button class="btn" id="btnCam"><i data-ic="camera"></i>拍照</button>
     <button class="btn" onclick="dlgAdd.close()">取消</button>
-    <button class="btn primary" id="btnProcess">✨ AI 辨識並整理</button>
+    <button class="btn primary" id="btnProcess"><i data-ic="sparkle"></i>AI 辨識並整理</button>
   </div>
 </div></dialog>
 
@@ -261,7 +286,7 @@ li[class^=hl-]{border-radius:8px;padding:1px 6px}
   <label>摘要</label><textarea id="eSummary" style="min-height:60px"></textarea>
   <label>重點（一行一點）</label><textarea id="ePoints" style="min-height:140px"></textarea>
   <label>關鍵字（逗號分隔）</label><input type="text" id="eKw">
-  <label>⭐ 重點標記（一行一個，會顯示在筆記最上方）</label><textarea id="eHl" style="min-height:70px" placeholder="例如：休克時優先給 epinephrine"></textarea>
+  <label>重點標記（一行一個，會顯示在筆記最上方）</label><textarea id="eHl" style="min-height:70px" placeholder="例如：休克時優先給 epinephrine"></textarea>
   <label>我的補充</label><textarea id="eMine" style="min-height:60px"></textarea>
   <label>原始辨識文字（可修正 AI 認錯的字）</label><textarea id="eRaw" style="min-height:90px"></textarea>
   <div class="foot">
@@ -275,6 +300,40 @@ li[class^=hl-]{border-radius:8px;padding:1px 6px}
 <dialog id="viewer" onclick="viewer.close()"><img id="viewerImg" alt=""></dialog>
 
 <script type="module">
+/* ============================================================
+   圖示（單色填滿 SVG，來源：Material Icons，Apache 2.0）
+   ============================================================ */
+const ICONS = {
+  link:'M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z',
+  edit:'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z',
+  trash:'M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z',
+  star:'M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z',
+  starOutline:'M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z',
+  download:'M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z',
+  upload:'M5 20h14v-2H5v2zm0-10h4v6h6v-6h4l-7-7-7 7z',
+  sparkle:'M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z',
+  camera:'M12 15.2a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z',
+  image:'M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z',
+  search:'M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z',
+  merge:'M17 20.41L18.41 19 15 15.59 13.59 17 17 20.41zM7.5 8H11v5.59L5.59 19 7 20.41l6-6V8h3.5L12 3.5 7.5 8z',
+  book:'M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z',
+  chart:'M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z',
+  brush:'M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34a.996.996 0 00-1.41 0L9 12.25 11.75 15l8.96-8.96a.996.996 0 000-1.41z',
+  plus:'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
+  close:'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z',
+  up:'M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z',
+  bold:'M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z',
+  indent:'M3 21h18v-2H3v2zM3 8v8l4-4-4-4zm8 9h10v-2H11v2zM3 3v2h18V3H3zm8 6h10V7H11v2zm0 4h10v-2H11v2z',
+  outdent:'M11 17h10v-2H11v2zm-8-5l4 4V8l-4 4zm0 9h18v-2H3v2zM3 3v2h18V3H3zm8 6h10V7H11v2zm0 4h10v-2H11v2z',
+  refresh:'M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z',
+  chevron:'M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z',
+  copy:'M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z',
+  open:'M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z',
+  warn:'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z',
+};
+const ic = name => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[name]}"/></svg>`;
+document.querySelectorAll('i[data-ic]').forEach(el => el.outerHTML = ic(el.dataset.ic));
+
 /* ============================================================
    儲存層：IndexedDB（全部資料只存在你的瀏覽器）
    ============================================================ */
@@ -435,11 +494,11 @@ async function callAI({prompt, images=[], json=false, onStatus}){
         if (missing) continue outer;            // 模型不存在 → 直接換下一個
         if (!busy) throw new Error('Gemini 錯誤：' + lastErr);
         if (attempt < waits.length){
-          onStatus?.(`⏳ Gemini 目前忙碌，${waits[attempt]} 秒後自動重試（${model}）…`);
+          onStatus?.(`Gemini 目前忙碌，${waits[attempt]} 秒後自動重試（${model}）…`);
           await new Promise(r=>setTimeout(r, waits[attempt]*1000));
         }
       }
-      onStatus?.(`⏳ ${model} 忙碌中，改用備用模型…`);
+      onStatus?.(`${model} 忙碌中，改用備用模型…`);
     }
     if (!res.ok && /quota|exhaust|exceed/i.test(lastErr)) throw new Error(`今天的免費額度可能已經用完，會在 ${hhmm(quotaResetTime())} 重置。也可以到設定改用 Claude。照片會保留。`);
     if (!res.ok) throw new Error('Gemini 伺服器目前太忙，所有模型都暫時無法使用，請過幾分鐘再按一次（照片會保留）。原始訊息：' + lastErr);
@@ -517,7 +576,7 @@ async function processAdd(){
     if (!batches.length) batches.push([]);
     let created = 0;
     for (let b=0;b<batches.length;b++){
-      prog.textContent = `🔍 AI 辨識中…（第 ${b+1}/${batches.length} 批）`;
+      prog.textContent = `AI 辨識中…（第 ${b+1}/${batches.length} 批）`;
       const imgs = batches[b];
       const out = await callAI({prompt: SLIDE_PROMPT(imgs.length, ctx, categories().map(c=>c[0]), b===0?text:''), images: imgs, json:true,
         onStatus: s => prog.textContent = s});
@@ -534,8 +593,8 @@ async function processAdd(){
     }
     await load(); pending=[]; renderPreviews(); $('#addText').value=''; prog.textContent='';
     dlgAdd.close(); state.view='date'; state.date=date; render();
-    toast(`✅ 已整理出 ${created} 則筆記`);
-  } catch(e){ prog.textContent = '⚠️ ' + e.message; }
+    toast(`已整理出 ${created} 則筆記`);
+  } catch(e){ prog.textContent = e.message; }
   finally{ btn.disabled = false; }
 }
 
@@ -553,12 +612,12 @@ async function hydrateThumbs(root){
 const plain = s => String(s||'').replace(/\*\*|`/g,'').replace(/\s+/g,' ').trim();
 function hlBox(n){
   const hls = n.highlights||[]; if (!hls.length) return '';
-  return `<div class="hl-box"><div class="t">⭐ 我的重點（${hls.length}）</div>
-    ${hls.map(h=>`<div class="hl hl-${h.color}"><span>${esc(h.text)}</span><button data-act="unhl" data-hid="${h.id}" title="移除這個重點">×</button></div>`).join('')}</div>`;
+  return `<div class="hl-box"><div class="t">${ic('star')}我的重點（${hls.length}）</div>
+    ${hls.map(h=>`<div class="hl hl-${h.color}"><span>${esc(h.text)}</span><button data-act="unhl" data-hid="${h.id}" title="移除這個重點">${ic('close')}</button></div>`).join('')}</div>`;
 }
 const mdInline = s => esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
-const ptRow = (t='', lv=0) => `<div class="pt-row" data-lv="${lv}"><span class="dot">•</span><div class="pt-txt" contenteditable="true" data-ph="輸入重點…">${mdInline(t)}</div><button class="pt-btn" data-act="e-up" title="上移">↑</button><button class="pt-btn" data-act="e-del" title="刪除">✕</button></div>`;
-const hlRow = (h={color:'y'}) => `<div class="hl-row hl-${h.color}" data-color="${h.color}" data-hid="${h.id||''}"><button class="cdot" data-act="e-hl-color" title="換顏色（重點／易錯／補充）"></button><div class="hl-txt" contenteditable="true" data-ph="輸入想記住的重點…">${esc(h.text||'')}</div><button class="pt-btn" data-act="e-del" title="刪除">✕</button></div>`;
+const ptRow = (t='', lv=0) => `<div class="pt-row" data-lv="${lv}"><span class="dot">•</span><div class="pt-txt" contenteditable="true" data-ph="輸入重點…">${mdInline(t)}</div><button class="pt-btn" data-act="e-up" title="上移">${ic('up')}</button><button class="pt-btn" data-act="e-del" title="刪除">${ic('close')}</button></div>`;
+const hlRow = (h={color:'y'}) => `<div class="hl-row hl-${h.color}" data-color="${h.color}" data-hid="${h.id||''}"><button class="cdot" data-act="e-hl-color" title="換顏色（重點／易錯／補充）"></button><div class="hl-txt" contenteditable="true" data-ph="輸入想記住的重點…">${esc(h.text||'')}</div><button class="pt-btn" data-act="e-del" title="刪除">${ic('close')}</button></div>`;
 const kwChip = k => `<span class="kwc" data-kw="${esc(k)}">${esc(k)}<button data-act="e-kw-del" title="移除">×</button></span>`;
 function editorHTML(n){
   const rows = (n.points||[]).flatMap(p=>{ const [first,...rest] = String(p).split('\n');
@@ -568,14 +627,14 @@ function editorHTML(n){
     <div class="row"><div><label>分類</label><input type="text" class="e-cat" list="cl-${n.id}" value="${esc(n.category)}"></div>
       <div><label>日期</label><input type="date" class="e-date" value="${n.date}"></div></div>
     <datalist id="cl-${n.id}">${categories().map(([c])=>`<option value="${esc(c)}">`).join('')}</datalist>
-    <label>⭐ 我的重點<span class="e-hint">點左邊圓點換顏色</span></label>
+    <label>我的重點<span class="e-hint">點左邊圓點換顏色</span></label>
     <div class="e-hls">${(n.highlights||[]).map(h=>hlRow(h)).join('')}</div>
-    <button class="e-add" data-act="e-add-hl">＋ 新增重點</button>
+    <button class="e-add" data-act="e-add-hl">${ic('plus')}新增重點</button>
     <label>摘要</label><textarea class="e-sum auto">${esc(n.summary||'')}</textarea>
     <label>重點內容<span class="e-hint">按 Enter 新增下一點</span></label>
-    <div class="e-tools"><button data-ed="bold"><b>B</b> 粗體</button><button data-ed="indent">⇥ 變子項目</button><button data-ed="outdent">⇤ 取消子項目</button></div>
+    <div class="e-tools"><button data-ed="bold">${ic('bold')}粗體</button><button data-ed="indent">${ic('indent')}變子項目</button><button data-ed="outdent">${ic('outdent')}取消子項目</button></div>
     <div class="e-points">${rows.join('') || ptRow()}</div>
-    <button class="e-add" data-act="e-add-pt">＋ 新增一點</button>
+    <button class="e-add" data-act="e-add-pt">${ic('plus')}新增一點</button>
     <label>關鍵字</label>
     <div class="kws">${(n.keywords||[]).map(kwChip).join('')}<input type="text" class="e-kw-in" placeholder="輸入後按 Enter 新增"></div>
     <label>我的補充</label><textarea class="e-mine auto" placeholder="自己的想法、老師補充的話…">${esc(n.mine||'')}</textarea>
@@ -599,7 +658,7 @@ function noteCard(n, {showDate=false}={}){
     <div class="entry-head" data-act="toggle">
       <div class="tile" style="background:${catColor(n.category)}">${first ? `<img data-img="${first}" alt="">` : esc([...(n.category||'筆')][0])}</div>
       <div class="et"><div class="tt">${esc(n.title)}</div><div class="st">${esc(sub)}</div></div>
-      <div class="er">${nh ? `★${nh}` : ''}<span class="chev">›</span></div>
+      <div class="er">${nh ? `${ic('star')}${nh}` : ''}<span class="chev">${ic('chevron')}</span></div>
     </div>
     <div class="entry-body">${state.editing===n.id ? editorHTML(n) : `
     <div class="meta">
@@ -611,15 +670,15 @@ function noteCard(n, {showDate=false}={}){
     ${n.summary ? `<div class="summary nb">${esc(n.summary)}</div>` : ''}
     ${(n.points||[]).length ? `<div class="md nb"><ul>${n.points.map((p,i)=>{ const h = hlMap.get(plain(p));
       const rp = renderPoint(p);
-      return `<li class="${h?'hl-'+h.color:''}">${rp.head} <button class="star ${h?'on':''}" data-act="star" data-i="${i}" title="${h?'取消重點':'標成重點'}">${h?'★':'☆'}</button>${rp.subs}</li>`; }).join('')}</ul></div>` : ''}
+      return `<li class="${h?'hl-'+h.color:''}">${rp.head} <button class="star ${h?'on':''}" data-act="star" data-i="${i}" title="${h?'取消重點':'標成重點'}">${ic(h?'star':'starOutline')}</button>${rp.subs}</li>`; }).join('')}</ul></div>` : ''}
     ${n.mine ? `<div class="ref nb"><span class="src">我的補充</span><br>${esc(n.mine)}</div>` : ''}
     ${(n.imageIds||[]).length ? `<div class="thumbs">${n.imageIds.map(id=>`<img data-img="${id}" alt="原始照片">`).join('')}</div>` : ''}
     ${n.rawText ? `<details style="margin-top:8px"><summary>查看原始辨識文字</summary><pre class="raw nb">${esc(n.rawText)}</pre></details>` : ''}
     <div class="related" id="rel-${n.id}" ${n.related ? '' : 'hidden'}>${n.related ? relatedHTML(n) : ''}</div>
     <div class="actions">
-      <button class="btn" data-act="related">🔗 相關知識</button>
-      <button class="btn" data-act="edit">✏️ 編輯</button>
-      <button class="btn danger" data-act="delete">🗑 刪除</button>
+      <button class="btn" data-act="related">${ic('link')}相關知識</button>
+      <button class="btn" data-act="edit">${ic('edit')}編輯</button>
+      <button class="btn danger" data-act="delete">${ic('trash')}刪除</button>
     </div>`}
     </div>
   </article>`;
@@ -632,8 +691,8 @@ function ledger(list, {desc=true, showDate=false}={}){
   return `<div class="ledger">${dates.map(d=>{
     const day = list.filter(n=>n.date===d).sort((a,b)=>a.createdAt-b.createdAt);
     const stars = day.reduce((s,n)=>s+(n.highlights||[]).length,0);
-    return `<div class="day-h"><span>${fmtDate(d).slice(5)}</span><span class="r">${day.length} 則${stars?` · ★${stars}`:''}
-      <button class="icon-btn" data-act="export-day" data-day="${d}" title="匯出這天">⬇︎</button></span></div>
+    return `<div class="day-h"><span>${fmtDate(d).slice(5)}</span><span class="r">${day.length} 則${stars?` · ${ic('star')}${stars}`:''}
+      <button class="icon-btn" data-act="export-day" data-day="${d}" title="匯出這天">${ic('download')}</button></span></div>
       ${day.map(n=>noteCard(n,{showDate})).join('')}`;
   }).join('')}</div>`;
 }
@@ -653,23 +712,23 @@ function viewTopic(){
   const all = inCat.slice().sort((a,b)=>a.date.localeCompare(b.date)).flatMap(n=>(n.highlights||[]).map(h=>({h,n})));
   return `<div class="section-title"><h2><span class="tile" style="display:inline-grid;width:34px;height:34px;border-radius:11px;font-size:15px;vertical-align:-7px;margin-right:8px;background:${catColor(state.cat)}">${esc([...state.cat][0])}</span>${esc(state.cat)}</h2>
       <div class="actions" style="margin:0">
-        <button class="btn primary" data-act="merge">✨ AI 合併整理</button>
-        <button class="btn" data-act="export-cat">⬇︎ 匯出</button>
+        <button class="btn primary" data-act="merge">${ic('sparkle')}AI 合併整理</button>
+        <button class="btn" data-act="export-cat">${ic('download')}匯出</button>
       </div></div>
-    ${all.length ? `<div class="card"><div class="hl-box" style="margin:0;border:0;padding:0;background:none"><div class="t">⭐ 這個分類的所有重點（${all.length}）</div>
+    ${all.length ? `<div class="card"><div class="hl-box" style="margin:0;border:0;padding:0;background:none"><div class="t">${ic('star')}這個分類的所有重點（${all.length}）</div>
       ${all.map(({h,n})=>`<div class="hl hl-${h.color}"><span>${esc(h.text)} <small>— ${n.date.slice(5).replace('-','/')}・${esc(n.title)}</small></span></div>`).join('')}</div></div>` : ''}
     <div id="mergeBox"></div>
-    <div class="sub-h" style="display:flex;justify-content:space-between;align-items:center">原始筆記（${inCat.length} 則）<button class="btn" data-act="recat" style="font-weight:400">🧩 合併相似分類</button></div>
+    <div class="sub-h" style="display:flex;justify-content:space-between;align-items:center">原始筆記（${inCat.length} 則）<button class="btn" data-act="recat" style="font-weight:400">${ic('merge')}合併相似分類</button></div>
     ${ledger(inCat, {desc:false, showDate:false})}`;
 }
 const catSig = cat => notes.filter(n=>n.category===cat).map(n=>n.id+':'+(n.updatedAt||n.createdAt)).sort().join('|');
 async function renderMergeBox(){
   const box = $('#mergeBox'); if (!box) return;
   const m = await kvGet('merge:'+state.cat);
-  if (!m){ box.innerHTML = `<div class="card notice">按「✨ AI 合併整理」，AI 會把這個分類下所有日期的筆記去除重複、合併相似內容，整理成一份完整的主題筆記。</div>`; return; }
+  if (!m){ box.innerHTML = `<div class="card notice">按「AI 合併整理」，AI 會把這個分類下所有日期的筆記去除重複、合併相似內容，整理成一份完整的主題筆記。</div>`; return; }
   const stale = m.sig !== catSig(state.cat);
-  box.innerHTML = `<div class="card"><div class="meta"><span>🧠 主題總整理</span><span>更新於 ${new Date(m.at).toLocaleString()}</span>
-    ${stale ? '<span class="stale">・有新筆記，建議重新整理</span>' : ''}</div><div class="md">${md(m.md)}</div></div>`;
+  box.innerHTML = `<div class="card"><div class="meta"><span style="display:flex;align-items:center;gap:4px;color:var(--accent);font-weight:600">${ic('sparkle')}主題總整理</span><span>更新於 ${new Date(m.at).toLocaleString()}</span>
+    ${stale ? '<span class="stale">・有新筆記，建議重新整理</span>' : ''}</div><div class="md">${md(m.md).replace(/⭐\uFE0F?/g, `<span style="color:var(--hy-b)">${ic('star')}</span>`)}</div></div>`;
 }
 async function mergeCategory(btn){
   const cat = state.cat, list = notes.filter(n=>n.category===cat).sort((a,b)=>a.date.localeCompare(b.date));
@@ -688,9 +747,9 @@ async function mergeCategory(btn){
 ${payload}`;
     const out = await callAI({prompt});
     await kvSet('merge:'+cat, {md:out, at:Date.now(), sig:catSig(cat)});
-    renderMergeBox(); toast('✅ 合併整理完成');
-  } catch(e){ toast('⚠️ '+e.message, 5000); }
-  finally{ btn.disabled=false; btn.textContent='✨ AI 合併整理'; }
+    renderMergeBox(); toast('合併整理完成');
+  } catch(e){ toast(e.message, 5000); }
+  finally{ btn.disabled=false; btn.innerHTML=ic('sparkle')+'AI 合併整理'; }
 }
 async function recategorize(btn){
   const cats = categories(); if (cats.length < 2) return toast('分類少於 2 個，不需要合併');
@@ -701,15 +760,15 @@ async function recategorize(btn){
 ${info}
 輸出 JSON：{"mapping":{"舊分類名":"新分類名"}}`});
     const map = Object.entries(out.mapping||{}).filter(([a,b])=>a!==b && cats.find(c=>c[0]===a));
-    if (!map.length) return toast('沒有需要合併的分類 👍');
+    if (!map.length) return toast('沒有需要合併的分類');
     showInfo(`<h2>建議合併以下分類</h2><table class="mapping">${map.map(([a,b])=>`<tr><td>${esc(a)}</td><td>→</td><td><b>${esc(b)}</b></td></tr>`).join('')}</table>
       <div class="foot"><button class="btn" onclick="dlgInfo.close()">取消</button><button class="btn primary" id="applyMap">套用</button></div>`);
     $('#applyMap').onclick = async ()=>{
       for (const n of notes){ const t = map.find(([a])=>a===n.category); if (t){ n.category=t[1]; n.updatedAt=Date.now(); await db.put('notes', n);} }
-      dlgInfo.close(); await load(); state.cat = map[0][1]; render(); toast('✅ 已合併分類');
+      dlgInfo.close(); await load(); state.cat = map[0][1]; render(); toast('已合併分類');
     };
-  } catch(e){ toast('⚠️ '+e.message, 5000); }
-  finally{ btn.disabled=false; btn.textContent='🧩 合併相似分類'; }
+  } catch(e){ toast(e.message, 5000); }
+  finally{ btn.disabled=false; btn.innerHTML=ic('merge')+'合併相似分類'; }
 }
 
 /* ============================================================
@@ -779,7 +838,7 @@ function highlight(text, words){
 }
 function relatedHTML(n){
   const r = n.related; if (!r) return '';
-  return `${(r.hits||[]).map(h=>`<div class="ref"><div class="src">📖《${esc(h.book)}》第 ${h.page} ${esc(h.unit||'頁')}</div>${highlight(h.text.slice(0,320), n.keywords||[])}…</div>`).join('')}
+  return `${(r.hits||[]).map(h=>`<div class="ref"><div class="src">${ic('book')}《${esc(h.book)}》第 ${h.page} ${esc(h.unit||'頁')}</div>${highlight(h.text.slice(0,320), n.keywords||[])}…</div>`).join('')}
     ${r.explain ? `<div class="md" style="margin-top:8px">${md(r.explain)}</div>` : ''}
     <div class="notice">${r.hits?.length ? '引用段落來自你上傳的教科書；' : ''}${r.general ? '標示「AI 補充」的內容來自 AI 一般知識，請自行查證。' : ''}</div>`;
 }
@@ -808,23 +867,23 @@ ${hits.length ? `以下是從使用者教科書中檢索到的段落：\n${hits.
     n.related = {hits, explain, general:true, at:Date.now()};
     await db.put('notes', n);
     const el = $('#rel-'+n.id); el.hidden=false; el.innerHTML = relatedHTML(n);
-    if (!refs.length) toast('提示：到「📖 教科書」上傳課本 PDF，就能引用頁碼', 4000);
-  } catch(e){ toast('⚠️ '+e.message, 5000); }
-  finally{ btn.disabled=false; btn.textContent='🔗 相關知識'; }
+    if (!refs.length) toast('提示：到「教科書」上傳課本 PDF，就能引用頁碼', 4000);
+  } catch(e){ toast(e.message, 5000); }
+  finally{ btn.disabled=false; btn.innerHTML=ic('link')+'相關知識'; }
 }
 function viewRefs(){
-  return `<div class="section-title"><h2>📖 教科書與參考資料</h2></div>
+  return `<div class="section-title"><h2>${ic('book')}教科書與參考資料</h2></div>
   <div class="card">
-    <p style="margin-top:0">上傳課本或講義（PDF / TXT / Markdown），之後在每則筆記按「🔗 相關知識」，就會從這些資料找出相關段落並標註頁碼。資料只存在你的瀏覽器。</p>
+    <p style="margin-top:0">上傳課本或講義（PDF / TXT / Markdown），之後在每則筆記按「相關知識」，就會從這些資料找出相關段落並標註頁碼。資料只存在你的瀏覽器。</p>
     <div class="actions"><button class="btn primary" data-act="add-ref">＋ 上傳教科書</button></div>
     <input type="file" id="refFile" accept=".pdf,.txt,.md,application/pdf,text/plain" multiple hidden>
     <div class="progress" id="refProg"></div>
   </div>
-  ${refs.map(r=>`<div class="card"><h3>📘 ${esc(r.name)}</h3><div class="meta">${new Set(r.chunks.map(c=>c.page)).size} ${r.unit}・${r.chunks.length} 個段落・加入於 ${new Date(r.addedAt).toLocaleDateString()}</div>
+  ${refs.map(r=>`<div class="card"><h3>${ic('book')}${esc(r.name)}</h3><div class="meta">${new Set(r.chunks.map(c=>c.page)).size} ${r.unit}・${r.chunks.length} 個段落・加入於 ${new Date(r.addedAt).toLocaleDateString()}</div>
     <div class="actions"><button class="btn danger" data-del-ref="${r.id}">刪除</button></div></div>`).join('')}
   ${refs.length ? `<div class="card"><label style="margin-top:0">試搜尋教科書</label><input type="text" id="refQ" placeholder="輸入關鍵字，例如：中央極限定理"><div id="refRes"></div></div>` : ''}
   <div class="card">
-    <h3>🔗 搭配 Gemini Notebook（原 NotebookLM）</h3>
+    <h3>${ic('link')}搭配 Gemini Notebook（原 NotebookLM）</h3>
     <p class="notice" style="font-size:14px">Gemini Notebook 個人版目前沒有公開 API，網頁無法直接寫入。最方便的做法：</p>
     <ol style="margin-top:4px">
       <li>按下面按鈕匯出全部筆記（Markdown 檔，依分類整理，含 AI 合併整理）。</li>
@@ -833,9 +892,9 @@ function viewRefs(){
     </ol>
     <p class="notice">小技巧：把匯出的內容貼到一份 Google 文件，再把那份文件加為來源；以後更新 Google 文件後，在 Gemini Notebook 按同步即可。</p>
     <div class="actions">
-      <button class="btn primary" data-act="export-all-md">⬇️ 匯出全部筆記（.md）</button>
-      <button class="btn" data-act="copy-all-md">📋 複製到剪貼簿</button>
-      <a class="btn" href="https://notebooklm.google.com/" target="_blank" rel="noopener" style="text-decoration:none">開啟 Gemini Notebook ↗</a>
+      <button class="btn primary" data-act="export-all-md">${ic('download')}匯出全部筆記（.md）</button>
+      <button class="btn" data-act="copy-all-md">${ic('copy')}複製到剪貼簿</button>
+      <a class="btn" href="https://notebooklm.google.com/" target="_blank" rel="noopener" >開啟 Gemini Notebook ${ic('open')}</a>
     </div>
   </div>`;
 }
@@ -869,7 +928,7 @@ function download(name, text, type='text/markdown'){
    ============================================================ */
 function viewSettings(){
   const p = settings.provider;
-  return `<div class="section-title"><h2>⚙️ 設定</h2></div>
+  return `<div class="section-title"><h2>設定</h2></div>
   <div class="card">
     <h3>AI 服務</h3>
     <p class="notice">金鑰只存在這台裝置的瀏覽器（localStorage），不會上傳到 GitHub。請不要把金鑰寫進程式碼。</p>
@@ -900,8 +959,8 @@ function viewSettings(){
     <h3>備份與還原</h3>
     <p class="notice">資料存在這個瀏覽器裡。換手機/電腦或清除瀏覽器資料前，請先備份。</p>
     <div class="actions">
-      <button class="btn" data-act="backup">⬇️ 下載完整備份（.json，含照片）</button>
-      <button class="btn" data-act="restore">⬆️ 從備份還原</button>
+      <button class="btn" data-act="backup">${ic('download')}下載完整備份（.json，含照片）</button>
+      <button class="btn" data-act="restore">${ic('upload')}從備份還原</button>
       <button class="btn danger" data-act="wipe">清除所有資料</button>
     </div>
     <input type="file" id="restoreFile" accept=".json,application/json" hidden>
@@ -931,18 +990,18 @@ function usageInner(){
       || '<tr><td colspan="4" class="notice">今天還沒有使用</td></tr>'}</table>
     <div class="notice">輸入/輸出為 tokens 數。每天 ${hhmm(quotaResetTime())}（你的時間）重置，也就是美國太平洋時間午夜。</div>
     <div class="notice">近 7 天：${hist.map(([d,n])=>`${d.slice(5).replace('-','/')} ${n} 次`).join('・')}</div>
-    ${u.lastLimit ? `<div class="stale">⚠️ 最近一次額度用完：${new Date(u.lastLimit.at).toLocaleString()}（${esc(u.lastLimit.model)}）</div>` : ''}`;
+    ${u.lastLimit ? `<div class="stale">最近一次額度用完：${new Date(u.lastLimit.at).toLocaleString()}（${esc(u.lastLimit.model)}）</div>` : ''}`;
 }
 function usageCard(){
   const main = settings.geminiModel || DEFAULTS.geminiModel;
   return `<div class="card">
-    <h3>📊 Gemini 用量與剩餘額度</h3>
+    <h3>${ic('chart')}Gemini 用量與剩餘額度</h3>
     <p class="notice" style="margin-top:0">Google 沒有提供讓網頁直接查詢「剩餘額度」的方式，所以這裡是網頁自己記錄的用量（只算這台裝置，手機和電腦分開計算）。最準確的數字請看官方頁面。</p>
     <div id="usageBox">${usageInner()}</div>
     <label>「${esc(main)}」每日請求上限（RPD，到官方頁面查看後填入）</label>
     <div class="inline"><input type="text" inputmode="numeric" id="sRpd" value="${settings.rpd?.[main] || ''}" placeholder="例如 250"><button class="btn" data-act="save-rpd">儲存</button></div>
     <div class="actions">
-      <a class="btn" href="https://aistudio.google.com/rate-limit?timeRange=last-28-days" target="_blank" rel="noopener">查看官方額度頁面 ↗</a>
+      <a class="btn" href="https://aistudio.google.com/rate-limit?timeRange=last-28-days" target="_blank" rel="noopener">查看官方額度頁面 ${ic('open')}</a>
       <button class="btn danger" data-act="reset-usage">清除用量紀錄</button>
     </div>
   </div>`;
@@ -954,7 +1013,7 @@ function openSettingsHint(){ state.view='settings'; render(); }
    ============================================================ */
 function emptyState(){
   return `<div class="empty"><b>還沒有筆記</b>按右下角「＋ 新增筆記」，拍一張 PPT 試試看。<br>
-  ${settings.geminiKey||settings.claudeKey ? '' : '<br>第一次使用請先到 <a href="#" data-goto="settings">⚙️ 設定</a> 填入 AI 金鑰。'}</div>`;
+  ${settings.geminiKey||settings.claudeKey ? '' : '<br>第一次使用請先到 <a href="#" data-goto="settings">設定</a> 填入 AI 金鑰。'}</div>`;
 }
 function render(){
   document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on', b.dataset.v===state.view));
@@ -1015,7 +1074,7 @@ document.addEventListener('click', async e=>{
     case 'e-up': { const r = btn.closest('.pt-row'), prev = r.previousElementSibling; if (prev) prev.before(r); break; }
     case 'e-hl-color': { const r = btn.closest('.hl-row'), next = {y:'p', p:'g', g:'y'}[r.dataset.color] || 'y';
       r.classList.remove('hl-'+r.dataset.color); r.classList.add('hl-'+next); r.dataset.color = next;
-      toast({y:'🟨 重點', p:'🟥 易錯', g:'🟩 補充'}[next], 1200); break; }
+      toast({y:'重點', p:'易錯', g:'補充'}[next], 1000); break; }
     case 'e-kw-del': btn.closest('.kwc').remove(); break;
     case 'star': {
       const text = plain(n.points[+btn.dataset.i]); const ex = (n.highlights||[]).find(h=>h.text===text);
@@ -1042,9 +1101,9 @@ document.addEventListener('click', async e=>{
     case 'save-settings': readSettingsForm(); saveSettings(); toast('已儲存設定'); break;
     case 'list-models': readSettingsForm(); $('#sProg').textContent='讀取中…';
       try{ const ms = await listModels(); $('#modelList').innerHTML = ms.map(m=>`<option value="${esc(m)}">`).join('');
-        $('#sProg').textContent = `找到 ${ms.length} 個模型，點模型欄位即可選擇。`; } catch(err){ $('#sProg').textContent='⚠️ '+err.message; } break;
+        $('#sProg').textContent = `找到 ${ms.length} 個模型，點模型欄位即可選擇。`; } catch(err){ $('#sProg').textContent=err.message; } break;
     case 'test-ai': readSettingsForm(); saveSettings(); $('#sProg').textContent='測試中…';
-      try{ const r = await callAI({prompt:'請只回答「連線成功」四個字。'}); $('#sProg').textContent='✅ '+r.trim().slice(0,40); } catch(err){ $('#sProg').textContent='⚠️ '+err.message; } break;
+      try{ const r = await callAI({prompt:'請只回答「連線成功」四個字。'}); $('#sProg').textContent=r.trim().slice(0,40); } catch(err){ $('#sProg').textContent=err.message; } break;
     case 'backup': {
       const images = await db.all('images'), kv = await db.all('kv');
       download(`筆記備份_${today()}.json`, JSON.stringify({app:'daily-notes', v:1, notes, images, refs:refs.map(r=>({...r, chunks:r.chunks.map(({page,text})=>({page,text}))})), kv}), 'application/json'); break; }
@@ -1066,14 +1125,14 @@ document.addEventListener('change', async e=>{
   if (t.id==='refFile'){
     const prog = $('#refProg');
     for (const f of [...t.files]){ prog.textContent = `匯入「${f.name}」中…`;
-      try{ await importRef(f, s=>prog.textContent=`「${f.name}」${s}`); } catch(err){ toast('⚠️ '+err.message, 6000); } }
-    t.value=''; await load(); render(); toast('✅ 教科書已加入');
+      try{ await importRef(f, s=>prog.textContent=`「${f.name}」${s}`); } catch(err){ toast(err.message, 6000); } }
+    t.value=''; await load(); render(); toast('教科書已加入');
   }
   if (t.id==='restoreFile'){
     try{ const d = JSON.parse(await t.files[0].text()); if (d.app!=='daily-notes') throw new Error('不是本網頁的備份檔');
       if (!confirm(`還原 ${d.notes.length} 則筆記？（同 ID 的資料會被覆蓋）`)) return;
       for (const s of ['notes','images','refs','kv']) for (const v of d[s]||[]) await db.put(s, v);
-      await load(); render(); toast('✅ 還原完成'); } catch(err){ toast('⚠️ '+err.message, 5000); }
+      await load(); render(); toast('還原完成'); } catch(err){ toast(err.message, 5000); }
     t.value='';
   }
 });
@@ -1081,7 +1140,7 @@ document.addEventListener('input', e=>{
   if (e.target.id==='q'){ state.q = e.target.value.trim(); if (state.view==='refs'||state.view==='settings') state.view='date'; render(); $('#q').focus(); }
   if (e.target.id==='refQ'){
     const q = e.target.value.trim(), hits = q ? searchRefs(q, 5) : [];
-    $('#refRes').innerHTML = hits.map(h=>`<div class="ref"><div class="src">📖《${esc(h.r.name)}》第 ${h.c.page} ${h.r.unit}</div>${highlight(h.c.text.slice(0,300), q.split(/\s+/))}…</div>`).join('') || (q?'<p class="notice">找不到相關段落</p>':'');
+    $('#refRes').innerHTML = hits.map(h=>`<div class="ref"><div class="src">${ic('book')}《${esc(h.r.name)}》第 ${h.c.page} ${h.r.unit}</div>${highlight(h.c.text.slice(0,300), q.split(/\s+/))}…</div>`).join('') || (q?'<p class="notice">找不到相關段落</p>':'');
   }
 });
 
@@ -1094,7 +1153,7 @@ async function addHighlight(n, text, color='y', src='sel'){
   const ex = n.highlights.find(h=>h.text===text);
   if (ex){ ex.color = color; } else n.highlights.push({id:uid(), text, color, src, at:Date.now()});
   n.updatedAt = Date.now(); await db.put('notes', n); rerenderCard(n);
-  toast(ex ? '已更新重點顏色' : '⭐ 已加到筆記最上方');
+  toast(ex ? '已更新重點顏色' : '已加到筆記最上方');
 }
 async function removeHighlight(n, hid){
   n.highlights = (n.highlights||[]).filter(h=>h.id!==hid); n.updatedAt = Date.now();
@@ -1131,7 +1190,7 @@ function applyMarks(article, n){
 let selInfo = null, selTimer;
 function updateSelTool(){
   const tool = $('#selTool'), sel = getSelection();
-  const hide = () => { tool.hidden = true; selInfo = null; };
+  const hide = () => { tool.hidden = true; selInfo = null; $('#fab').style.visibility = ''; };
   if (!sel || !sel.rangeCount || sel.isCollapsed) return hide();
   const range = sel.getRangeAt(0); let el = range.commonAncestorContainer; if (el.nodeType!==1) el = el.parentElement;
   const art = el?.closest('article[data-id]');
@@ -1139,19 +1198,14 @@ function updateSelTool(){
   const text = sel.toString().replace(/\s+/g,' ').trim();
   if (text.length<2 || text.length>400) return hide();
   selInfo = {id:art.dataset.id, text};
-  tool.hidden = false;
-  const r = range.getBoundingClientRect(), w = tool.offsetWidth, h = tool.offsetHeight;
-  let top = r.bottom + 14; if (top + h > innerHeight - 10) top = Math.max(10, r.top - h - 14); // iPhone 的系統選單在上方，工具列放下方
-  tool.style.top = top + 'px';
-  tool.style.left = Math.min(Math.max(10, r.left + r.width/2 - w/2), innerWidth - w - 10) + 'px';
+  tool.hidden = false; $('#fab').style.visibility = 'hidden'; // 固定在畫面底部，不和系統選單搶位置
 }
 document.addEventListener('selectionchange', ()=>{ clearTimeout(selTimer); selTimer = setTimeout(updateSelTool, 150); });
-addEventListener('scroll', ()=>{ if (!$('#selTool').hidden) updateSelTool(); }, {passive:true});
 $('#selTool').addEventListener('pointerdown', async e=>{
   e.preventDefault(); // 保留選取狀態
   const b = e.target.closest('button[data-c]'); if (!b || !selInfo) return;
   const {id, text} = selInfo; const n = notes.find(x=>x.id===id);
-  getSelection().removeAllRanges(); $('#selTool').hidden = true; selInfo = null;
+  getSelection().removeAllRanges(); $('#selTool').hidden = true; selInfo = null; $('#fab').style.visibility = '';
   if (n) await addHighlight(n, text, b.dataset.c, 'sel');
 });
 
@@ -1206,7 +1260,7 @@ async function saveEdit(n, card){
     rawText: ed.querySelector('.e-raw').value.trim(),
     updatedAt: Date.now()
   });
-  await db.put('notes', n); state.editing = null; await load(); render(); scrollToNote(n.id); toast('✅ 已儲存');
+  await db.put('notes', n); state.editing = null; await load(); render(); scrollToNote(n.id); toast('已儲存');
 }
 document.addEventListener('input', e=>{ if (e.target.matches?.('textarea.auto')) autoGrow(e.target); });
 document.addEventListener('toggle', e=>{ e.target.querySelectorAll?.('textarea.auto').forEach(autoGrow); }, true);
@@ -1260,7 +1314,7 @@ await load(); render();
    版本檢查：有新版時主動詢問要不要更新
    ⚠️ 每次修改並上傳 index.html 時，請把 APP_VERSION 改成新的值
    ============================================================ */
-const APP_VERSION = '2026.11.19-6';
+const APP_VERSION = '2026.11.19-7';
 let lastCheck = 0;
 async function checkUpdate(force=false){
   if (!/^https?:/.test(location.protocol)) return;          // 本機直接開檔案時不檢查
@@ -1287,7 +1341,7 @@ setInterval(checkUpdate, 30*60*1000);
 // 更新完成後把網址上的 ?v= 拿掉，並提示
 if (new URLSearchParams(location.search).has('v')){
   history.replaceState(null, '', location.pathname);
-  toast(`✅ 已更新到 ${APP_VERSION}`);
+  toast(`已更新到 ${APP_VERSION}`);
 }
 </script>
 </body>
