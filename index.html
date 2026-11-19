@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>每日筆記整理</title>
+<meta name="theme-color" content="#1f6f68">
+<style>
+:root{
+  --bg:#f6f4ef; --card:#fffdf9; --ink:#1d2321; --muted:#6b7370; --line:#e3ded3;
+  --accent:#1f6f68; --accent-soft:#e2efec; --warn:#b5482f; --mark:#fff0b3;
+  --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#141716;--card:#1d2120;--ink:#e8ebe9;--muted:#9aa3a0;--line:#2e3432;
+  --accent:#5fb8ad;--accent-soft:#213431;--warn:#e07a62;--mark:#5a4a12;}
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.65 -apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:17px;margin-right:auto;letter-spacing:.02em}
+.brand span{color:var(--accent)}
+nav{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px}
+nav button{border:0;background:none;padding:6px 14px;border-radius:999px;cursor:pointer;color:var(--muted);white-space:nowrap}
+nav button.on{background:var(--accent);color:#fff}
+.search{flex:1 1 180px;max-width:260px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card)}
+main{max-width:1100px;margin:0 auto;padding:16px 16px 110px}
+.layout{display:grid;grid-template-columns:230px 1fr;gap:18px;align-items:start}
+@media (max-width:520px){nav{width:100%;justify-content:space-between}nav button{padding:6px 8px;font-size:14px}.search{max-width:none}}
+@media (max-width:760px){.layout{grid-template-columns:1fr}.side{position:static!important;display:flex;overflow-x:auto;gap:6px;padding-bottom:4px}
+  .side .item{flex:0 0 auto}.side h4{display:none}}
+.side{position:sticky;top:70px}
+.side h4{margin:4px 6px 8px;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.08em}
+.item{display:flex;justify-content:space-between;gap:8px;padding:8px 12px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+.item:hover{background:var(--card)}
+.item.on{background:var(--card);border-color:var(--line);box-shadow:var(--shadow)}
+.item .n{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);margin-bottom:14px}
+.card h3{margin:0 0 4px;font-size:17px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:12.5px;margin-bottom:8px}
+.chip{display:inline-block;padding:1px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:12px;cursor:pointer}
+.kw{display:inline-block;padding:0 7px;border:1px solid var(--line);border-radius:6px;font-size:12px;color:var(--muted);margin:2px 4px 0 0}
+.summary{color:var(--muted);margin:4px 0 8px}
+.card ul{margin:6px 0;padding-left:20px}
+.thumbs{display:flex;gap:6px;overflow-x:auto;margin-top:8px}
+.thumbs img{height:64px;border-radius:8px;border:1px solid var(--line);cursor:zoom-in;object-fit:cover}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.btn{border:1px solid var(--line);background:var(--card);padding:6px 12px;border-radius:9px;cursor:pointer;font-size:13.5px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.08);color:#fff}
+.btn.danger:hover{border-color:var(--warn);color:var(--warn)}
+.btn:disabled{opacity:.5;cursor:wait}
+.fab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:30;border:0;border-radius:999px;
+  background:var(--accent);color:#fff;padding:14px 22px;font-size:16px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.2);cursor:pointer}
+.empty{text-align:center;color:var(--muted);padding:60px 20px}
+.empty b{display:block;font-size:18px;color:var(--ink);margin-bottom:6px}
+.md h1,.md h2,.md h3{margin:14px 0 6px;line-height:1.35}
+.md h1{font-size:19px}.md h2{font-size:17px}.md h3{font-size:15.5px}
+.md p{margin:6px 0}.md ul,.md ol{margin:4px 0;padding-left:22px}
+.md code{background:var(--accent-soft);padding:0 4px;border-radius:4px;font-size:.92em}
+.md blockquote{margin:6px 0;padding:4px 12px;border-left:3px solid var(--accent);color:var(--muted)}
+.ref{border-left:3px solid var(--accent);padding:6px 12px;margin:8px 0;background:var(--bg);border-radius:0 8px 8px 0;font-size:13.5px}
+.ref .src{font-size:12px;color:var(--accent);font-weight:600}
+mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
+.related{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.notice{font-size:12.5px;color:var(--muted)}
+.stale{color:var(--warn);font-size:12.5px}
+/* dialogs */
+dialog{border:0;border-radius:18px;padding:0;width:min(640px,94vw);max-height:90vh;background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+.dlg{padding:18px 20px;overflow:auto;max-height:90vh}
+.dlg h2{margin:0 0 12px;font-size:18px}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input[type=text],input[type=password],input[type=date],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg)}
+textarea{min-height:80px;resize:vertical}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;cursor:pointer;color:var(--muted)}
+.drop:hover{border-color:var(--accent);color:var(--accent)}
+.previews{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px}
+.previews div{position:relative}
+.previews img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.previews button{position:absolute;top:3px;right:3px;border:0;border-radius:50%;width:22px;height:22px;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;line-height:1}
+.foot{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;position:sticky;bottom:0;background:var(--card);padding-top:8px}
+.progress{font-size:13px;color:var(--accent);margin-top:10px;min-height:20px}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:99;max-width:90vw}
+#toast.show{opacity:1}
+#viewer{width:auto;max-width:96vw;background:#000}
+#viewer img{display:block;max-width:96vw;max-height:88vh}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 12px;flex-wrap:wrap}
+.section-title h2{margin:0;font-size:20px}
+details summary{cursor:pointer;color:var(--muted);font-size:13px}
+pre.raw{white-space:pre-wrap;font-size:12.5px;background:var(--bg);padding:8px;border-radius:8px;max-height:240px;overflow:auto}
+.mapping td{padding:3px 8px;border-bottom:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand">📒 每日<span>筆記</span>整理</div>
+    <input class="search" id="q" type="search" placeholder="搜尋筆記…">
+    <nav id="tabs">
+      <button data-v="date" class="on">📅 日期</button>
+      <button data-v="topic">📚 總整理</button>
+      <button data-v="refs">📖 教科書</button>
+      <button data-v="settings">⚙️ 設定</button>
+    </nav>
+  </div>
+</header>
+<main id="app"></main>
+<button class="fab" id="fab">＋ 新增筆記</button>
+<div id="toast"></div>
+
+<!-- 新增筆記 -->
+<dialog id="dlgAdd"><div class="dlg">
+  <h2>新增筆記</h2>
+  <div class="row">
+    <div><label>日期</label><input type="date" id="addDate"></div>
+    <div><label>科目 / 課程（選填，幫助分類）</label><input type="text" id="addCtx" placeholder="例如：統計學、第5週"></div>
+  </div>
+  <label>拍照或選擇照片（PPT、白板、講義）</label>
+  <div class="drop" id="drop">📷 點這裡拍照 / 選照片，或把圖片拖進來<br><span class="notice">可一次多張，AI 會把同主題的投影片合併</span></div>
+  <input type="file" id="file" accept="image/*" multiple hidden>
+  <input type="file" id="cam" accept="image/*" capture="environment" hidden>
+  <div class="previews" id="previews"></div>
+  <label>或直接輸入文字筆記（選填）</label>
+  <textarea id="addText" placeholder="上課聽到的重點、自己的想法…"></textarea>
+  <div class="progress" id="addProg"></div>
+  <div class="foot">
+    <button class="btn" id="btnCam">📷 拍照</button>
+    <button class="btn" onclick="dlgAdd.close()">取消</button>
+    <button class="btn primary" id="btnProcess">✨ AI 辨識並整理</button>
+  </div>
+</div></dialog>
+
+<!-- 編輯 -->
+<dialog id="dlgEdit"><div class="dlg">
+  <h2>編輯筆記</h2>
+  <label>標題</label><input type="text" id="eTitle">
+  <div class="row">
+    <div><label>分類</label><input type="text" id="eCat" list="catList"></div>
+    <div><label>日期</label><input type="date" id="eDate"></div>
+  </div>
+  <datalist id="catList"></datalist>
+  <label>摘要</label><textarea id="eSummary" style="min-height:60px"></textarea>
+  <label>重點（一行一點）</label><textarea id="ePoints" style="min-height:140px"></textarea>
+  <label>關鍵字（逗號分隔）</label><input type="text" id="eKw">
+  <label>我的補充</label><textarea id="eMine" style="min-height:60px"></textarea>
+  <div class="foot">
+    <button class="btn" onclick="dlgEdit.close()">取消</button>
+    <button class="btn primary" id="btnSaveEdit">儲存</button>
+  </div>
+</div></dialog>
+
+<!-- 通用確認 / 資訊 -->
+<dialog id="dlgInfo"><div class="dlg" id="infoBody"></div></dialog>
+<dialog id="viewer" onclick="viewer.close()"><img id="viewerImg" alt=""></dialog>
+
+<script type="module">
+/* ============================================================
+   儲存層：IndexedDB（全部資料只存在你的瀏覽器）
+   ============================================================ */
+const DB_NAME = 'daily-notes', DB_VER = 1;
+let _db;
+function openDB(){
+  if (_db) return Promise.resolve(_db);
+  return new Promise((res, rej)=>{
+    const r = indexedDB.open(DB_NAME, DB_VER);
+    r.onupgradeneeded = () => {
+      const db = r.result;
+      for (const s of ['notes','images','refs','kv']) if (!db.objectStoreNames.contains(s)) db.createObjectStore(s, {keyPath:'id'});
+    };
+    r.onsuccess = () => { _db = r.result; res(_db); };
+    r.onerror = () => rej(r.error);
+  });
+}
+async function tx(store, mode, fn){
+  const db = await openDB();
+  return new Promise((res, rej)=>{
+    const t = db.transaction(store, mode), s = t.objectStore(store);
+    const out = fn(s);
+    t.oncomplete = () => res(out && 'result' in out ? out.result : out);
+    t.onerror = () => rej(t.error);
+  });
+}
+const db = {
+  all: s => tx(s,'readonly', st => st.getAll()),
+  get: (s,id) => tx(s,'readonly', st => st.get(id)),
+  put: (s,v) => tx(s,'readwrite', st => st.put(v)),
+  del: (s,id) => tx(s,'readwrite', st => st.delete(id)),
+  clear: s => tx(s,'readwrite', st => st.clear()),
+};
+const kvGet = async k => (await db.get('kv', k))?.value;
+const kvSet = (k, value) => db.put('kv', {id:k, value});
+
+/* ============================================================
+   設定
+   ============================================================ */
+const DEFAULTS = { provider:'gemini', geminiKey:'', geminiModel:'gemini-flash-latest',
+  claudeKey:'', claudeModel:'claude-sonnet-5-5', lang:'繁體中文' };
+let settings = {...DEFAULTS, ...JSON.parse(localStorage.getItem('dn-settings')||'{}')};
+const saveSettings = () => localStorage.setItem('dn-settings', JSON.stringify(settings));
+
+/* ============================================================
+   工具
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+const today = () => { const d = new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
+const fmtDate = d => { const [y,m,dd] = d.split('-'); const w = '日一二三四五六'[new Date(d+'T00:00').getDay()]; return `${y}/${m}/${dd}（${w}）`; };
+function toast(msg, ms=2600){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), ms); }
+
+/* 精簡 Markdown 轉 HTML（先跳脫，避免 XSS） */
+function md(src){
+  const inline = s => esc(s)
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>');
+  const lines = String(src||'').replace(/\r/g,'').split('\n');
+  let html='', list=null;
+  const close = () => { if (list){ html += `</${list}>`; list=null; } };
+  for (const raw of lines){
+    const l = raw.trimEnd();
+    let m;
+    if (!l.trim()){ close(); continue; }
+    if ((m = l.match(/^(#{1,4})\s+(.*)/))){ close(); const n=Math.min(m[1].length+1,3); html+=`<h${n}>${inline(m[2])}</h${n}>`; continue; }
+    if ((m = l.match(/^(\s*)[-*•]\s+(.*)/))){ if(list!=='ul'){close();html+='<ul>';list='ul';} const pad=Math.min(m[1].length,8)*6; html+=`<li style="margin-left:${pad}px">${inline(m[2])}</li>`; continue; }
+    if ((m = l.match(/^\s*\d+[.)]\s+(.*)/))){ if(list!=='ol'){close();html+='<ol>';list='ol';} html+=`<li>${inline(m[1])}</li>`; continue; }
+    if ((m = l.match(/^>\s?(.*)/))){ close(); html+=`<blockquote>${inline(m[1])}</blockquote>`; continue; }
+    close(); html += `<p>${inline(l)}</p>`;
+  }
+  close(); return html;
+}
+
+/* 圖片壓縮：長邊 1600px JPEG，減少傳輸量 */
+async function compressImage(file, maxSide=1600, q=0.8){
+  const url = URL.createObjectURL(file);
+  try{
+    const img = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=url; });
+    const s = Math.min(1, maxSide/Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement('canvas');
+    c.width = Math.round(img.naturalWidth*s); c.height = Math.round(img.naturalHeight*s);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    return c.toDataURL('image/jpeg', q);
+  } finally { URL.revokeObjectURL(url); }
+}
+
+/* ============================================================
+   AI 呼叫（瀏覽器直接呼叫，金鑰只存在你的裝置）
+   ============================================================ */
+function extractJSON(text){
+  let t = String(text||'').trim().replace(/^```(?:json)?\s*/i,'').replace(/```\s*$/,'');
+  try { return JSON.parse(t); } catch {}
+  const a = t.indexOf('{'), b = t.lastIndexOf('}');
+  if (a>=0 && b>a) return JSON.parse(t.slice(a,b+1));
+  throw new Error('AI 回傳的格式無法解析');
+}
+async function callAI({prompt, images=[], json=false}){
+  if (window.__mockAI) return window.__mockAI({prompt, images, json}); // 測試用
+  const p = settings.provider;
+  const key = p==='gemini' ? settings.geminiKey : settings.claudeKey;
+  if (!key) { openSettingsHint(); throw new Error('請先到「設定」填入 API 金鑰'); }
+  const b64 = images.map(d => d.split(',')[1]);
+  let res, data, text;
+  if (p === 'gemini'){
+    const model = settings.geminiModel || DEFAULTS.geminiModel;
+    res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+      method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':key},
+      body: JSON.stringify({
+        contents:[{role:'user', parts:[...b64.map(d=>({inline_data:{mime_type:'image/jpeg', data:d}})), {text:prompt}]}],
+        generationConfig: json ? {responseMimeType:'application/json', temperature:0.2} : {temperature:0.3}
+      })
+    });
+    data = await res.json().catch(()=>({}));
+    if (!res.ok) throw new Error('Gemini 錯誤：' + (data.error?.message || res.status));
+    text = (data.candidates?.[0]?.content?.parts||[]).filter(x=>!x.thought).map(x=>x.text||'').join('');
+  } else {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({ model: settings.claudeModel || DEFAULTS.claudeModel, max_tokens: 8000,
+        messages:[{role:'user', content:[...b64.map(d=>({type:'image', source:{type:'base64', media_type:'image/jpeg', data:d}})),
+          {type:'text', text: prompt + (json ? '\n\n只輸出 JSON，不要任何其他文字。' : '')}]}] })
+    });
+    data = await res.json().catch(()=>({}));
+    if (!res.ok) throw new Error('Claude 錯誤：' + (data.error?.message || res.status));
+    text = (data.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('');
+  }
+  if (!text) throw new Error('AI 沒有回傳內容');
+  return json ? extractJSON(text) : text;
+}
+async function listModels(){
+  const p = settings.provider;
+  if (p==='gemini'){
+    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', {headers:{'x-goog-api-key':settings.geminiKey}});
+    const d = await r.json(); if (!r.ok) throw new Error(d.error?.message||r.status);
+    return (d.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace('models/',''));
+  }
+  const r = await fetch('https://api.anthropic.com/v1/models?limit=100', {headers:{'x-api-key':settings.claudeKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'}});
+  const d = await r.json(); if (!r.ok) throw new Error(d.error?.message||r.status);
+  return (d.data||[]).map(m=>m.id);
+}
+
+/* ============================================================
+   狀態
+   ============================================================ */
+let notes = [], refs = [];
+const state = { view:'date', date:null, cat:null, q:'' };
+async function load(){ notes = await db.all('notes'); refs = await db.all('refs'); }
+const categories = () => {
+  const m = new Map(); for (const n of notes) m.set(n.category||'未分類', (m.get(n.category||'未分類')||0)+1);
+  return [...m.entries()].sort((a,b)=>b[1]-a[1]);
+};
+const matchQ = n => !state.q || [n.title,n.summary,n.category,n.mine,(n.points||[]).join(' '),(n.keywords||[]).join(' '),n.rawText].join(' ').toLowerCase().includes(state.q.toLowerCase());
+
+/* ============================================================
+   1) 拍照 → AI 辨識 → 整理成筆記
+   ============================================================ */
+let pending = []; // dataURL[]
+function renderPreviews(){
+  $('#previews').innerHTML = pending.map((d,i)=>`<div><img src="${d}" alt=""><button data-i="${i}" title="移除">×</button></div>`).join('');
+}
+async function addFiles(files){
+  for (const f of files){ if (!f.type.startsWith('image/')) continue;
+    try { pending.push(await compressImage(f)); } catch { toast('有一張圖片無法讀取（格式不支援）'); } }
+  renderPreviews();
+}
+const SLIDE_PROMPT = (n, ctx, cats, text) => `你是一位擅長整理課堂筆記的助理。${n ? `以下是使用者上課拍的 ${n} 張照片（PPT 投影片、白板或講義），圖片編號依序為 0 到 ${n-1}。` : ''}
+${ctx ? `課程/科目：${ctx}\n` : ''}${text ? `使用者另外輸入的文字筆記：\n"""${text}"""\n` : ''}
+請完成：
+1. 辨識圖片中的所有文字（OCR）。修正明顯的辨識錯字；忽略頁碼、校徽、浮水印、裝飾。圖表請用文字描述重點。
+2. 依「主題」整理：同一主題的多張投影片合併成一則筆記；不同主題分成不同筆記。
+3. 為每則筆記指定一個分類（科目或大主題）。請優先沿用既有分類：${cats.length ? cats.map(c=>`「${c}」`).join('、') : '（目前沒有）'}；只有都不適合時才新建一個簡短分類（2~10 字）。
+4. 全部使用${settings.lang}撰寫，專有名詞可保留原文並附註。
+
+輸出 JSON，格式如下：
+{"notes":[{"title":"簡短標題","category":"分類","summary":"2~3 句摘要","points":["重點1（可用 **粗體** 標示關鍵詞）","重點2"],"keywords":["關鍵字1","關鍵字2"],"rawText":"這則筆記對應的原始辨識文字","sourceImages":[0,1]}]}`;
+
+async function processAdd(){
+  const text = $('#addText').value.trim(), ctx = $('#addCtx').value.trim(), date = $('#addDate').value || today();
+  if (!pending.length && !text) return toast('請先加入照片或輸入文字');
+  const btn = $('#btnProcess'), prog = $('#addProg'); btn.disabled = true;
+  try{
+    // 圖片多時分批，每批 6 張
+    const batches = []; for (let i=0;i<pending.length;i+=6) batches.push(pending.slice(i,i+6));
+    if (!batches.length) batches.push([]);
+    let created = 0;
+    for (let b=0;b<batches.length;b++){
+      prog.textContent = `🔍 AI 辨識中…（第 ${b+1}/${batches.length} 批）`;
+      const imgs = batches[b];
+      const out = await callAI({prompt: SLIDE_PROMPT(imgs.length, ctx, categories().map(c=>c[0]), b===0?text:''), images: imgs, json:true});
+      const imgIds = [];
+      for (const d of imgs){ const id = uid(); await db.put('images', {id, data:d}); imgIds.push(id); }
+      for (const n of (out.notes||[])){
+        const src = (n.sourceImages||[]).map(i=>imgIds[i]).filter(Boolean);
+        await db.put('notes', { id:uid(), date, createdAt:Date.now(), title:n.title||'未命名筆記', category:(n.category||ctx||'未分類').trim(),
+          summary:n.summary||'', points:n.points||[], keywords:n.keywords||[], rawText:n.rawText||'', mine:'',
+          imageIds: src.length ? src : imgIds, context:ctx });
+        created++;
+      }
+    }
+    await load(); pending=[]; renderPreviews(); $('#addText').value=''; prog.textContent='';
+    dlgAdd.close(); state.view='date'; state.date=date; render();
+    toast(`✅ 已整理出 ${created} 則筆記`);
+  } catch(e){ prog.textContent = '⚠️ ' + e.message; }
+  finally{ btn.disabled = false; }
+}
+
+/* ============================================================
+   畫面：筆記卡片
+   ============================================================ */
+const imgCache = new Map();
+async function hydrateThumbs(root){
+  for (const el of root.querySelectorAll('img[data-img]')){
+    const id = el.dataset.img; let d = imgCache.get(id);
+    if (!d){ d = (await db.get('images', id))?.data; if (d) imgCache.set(id,d); }
+    if (d) el.src = d; else el.remove();
+  }
+}
+function noteCard(n, {showDate=false}={}){
+  return `<article class="card" data-id="${n.id}">
+    <h3>${esc(n.title)}</h3>
+    <div class="meta">
+      <span class="chip" data-cat="${esc(n.category)}">${esc(n.category)}</span>
+      ${showDate ? `<span>${fmtDate(n.date)}</span>` : ''}
+      ${(n.keywords||[]).map(k=>`<span class="kw">${esc(k)}</span>`).join('')}
+    </div>
+    ${n.summary ? `<div class="summary">${esc(n.summary)}</div>` : ''}
+    ${(n.points||[]).length ? `<div class="md"><ul>${n.points.map(p=>`<li>${md(p).replace(/^<p>|<\/p>$/g,'')}</li>`).join('')}</ul></div>` : ''}
+    ${n.mine ? `<div class="ref"><span class="src">我的補充</span><br>${esc(n.mine)}</div>` : ''}
+    ${(n.imageIds||[]).length ? `<div class="thumbs">${n.imageIds.map(id=>`<img data-img="${id}" alt="原始照片">`).join('')}</div>` : ''}
+    ${n.rawText ? `<details style="margin-top:8px"><summary>查看原始辨識文字</summary><pre class="raw">${esc(n.rawText)}</pre></details>` : ''}
+    <div class="related" id="rel-${n.id}" ${n.related ? '' : 'hidden'}>${n.related ? relatedHTML(n) : ''}</div>
+    <div class="actions">
+      <button class="btn" data-act="related">🔗 相關知識</button>
+      <button class="btn" data-act="edit">✏️ 編輯</button>
+      <button class="btn danger" data-act="delete">🗑 刪除</button>
+    </div>
+  </article>`;
+}
+
+/* ---------- 模式一：日期閱覽 ---------- */
+function viewDate(){
+  const list = notes.filter(matchQ);
+  const dates = [...new Set(list.map(n=>n.date))].sort().reverse();
+  if (!notes.length) return emptyState();
+  if (!state.date || !dates.includes(state.date)) state.date = dates[0];
+  const day = list.filter(n=>n.date===state.date).sort((a,b)=>a.createdAt-b.createdAt);
+  return `<div class="layout">
+    <aside class="side"><h4>日期</h4>
+      ${dates.map(d=>`<div class="item ${d===state.date?'on':''}" data-date="${d}"><span>${fmtDate(d)}</span><span class="n">${list.filter(n=>n.date===d).length}</span></div>`).join('') || '<div class="notice">沒有符合的筆記</div>'}
+    </aside>
+    <section>
+      ${state.date ? `<div class="section-title"><h2>${fmtDate(state.date)}</h2>
+        <div class="actions" style="margin:0"><button class="btn" data-act="export-day">⬇️ 匯出這天</button></div></div>` : ''}
+      ${day.map(n=>noteCard(n)).join('')}
+    </section></div>`;
+}
+
+/* ---------- 模式二：總筆記整理（分類 + 合併） ---------- */
+function viewTopic(){
+  if (!notes.length) return emptyState();
+  const cats = categories();
+  if (!state.cat || !cats.find(c=>c[0]===state.cat)) state.cat = cats[0][0];
+  const inCat = notes.filter(n=>(n.category||'未分類')===state.cat && matchQ(n)).sort((a,b)=>a.date.localeCompare(b.date)||a.createdAt-b.createdAt);
+  return `<div class="layout">
+    <aside class="side"><h4>分類</h4>
+      ${cats.map(([c,k])=>`<div class="item ${c===state.cat?'on':''}" data-cat-item="${esc(c)}"><span>${esc(c)}</span><span class="n">${k}</span></div>`).join('')}
+      <div style="margin-top:10px"><button class="btn" data-act="recat" style="width:100%">🧩 合併相似分類</button></div>
+    </aside>
+    <section>
+      <div class="section-title"><h2>${esc(state.cat)}</h2>
+        <div class="actions" style="margin:0">
+          <button class="btn primary" data-act="merge">✨ AI 合併整理</button>
+          <button class="btn" data-act="export-cat">⬇️ 匯出</button>
+        </div></div>
+      <div id="mergeBox"></div>
+      <h4 style="color:var(--muted);font-weight:600;margin:18px 0 8px">原始筆記（${inCat.length} 則，依日期）</h4>
+      ${inCat.map(n=>noteCard(n,{showDate:true})).join('')}
+    </section></div>`;
+}
+const catSig = cat => notes.filter(n=>n.category===cat).map(n=>n.id+':'+(n.updatedAt||n.createdAt)).sort().join('|');
+async function renderMergeBox(){
+  const box = $('#mergeBox'); if (!box) return;
+  const m = await kvGet('merge:'+state.cat);
+  if (!m){ box.innerHTML = `<div class="card notice">按「✨ AI 合併整理」，AI 會把這個分類下所有日期的筆記去除重複、合併相似內容，整理成一份完整的主題筆記。</div>`; return; }
+  const stale = m.sig !== catSig(state.cat);
+  box.innerHTML = `<div class="card"><div class="meta"><span>🧠 主題總整理</span><span>更新於 ${new Date(m.at).toLocaleString()}</span>
+    ${stale ? '<span class="stale">・有新筆記，建議重新整理</span>' : ''}</div><div class="md">${md(m.md)}</div></div>`;
+}
+async function mergeCategory(btn){
+  const cat = state.cat, list = notes.filter(n=>n.category===cat).sort((a,b)=>a.date.localeCompare(b.date));
+  btn.disabled = true; btn.textContent = '整理中…';
+  try{
+    const payload = list.map(n=>`### [${n.date}] ${n.title}\n${n.summary}\n${(n.points||[]).map(p=>'- '+p).join('\n')}${n.mine?`\n- (使用者補充) ${n.mine}`:''}`).join('\n\n');
+    const prompt = `以下是使用者在「${cat}」這個分類下，不同日期的課堂筆記。請整合成一份完整、有條理的主題筆記：
+- 依「子主題/概念」重新組織，而不是依日期。
+- 內容相同或相似的重點要合併成一條，不要重複；互相補充的內容要整合在一起。
+- 每條重點後面用（MM/DD）標示出自哪幾天的筆記，例如（11/12, 11/19）。
+- 最前面放「## 一句話總覽」，最後放「## 尚待釐清 / 可延伸」列出筆記中模糊或值得深入的地方。
+- 使用 Markdown（## 標題、- 條列、**粗體**），使用${settings.lang}。
+
+筆記：
+${payload}`;
+    const out = await callAI({prompt});
+    await kvSet('merge:'+cat, {md:out, at:Date.now(), sig:catSig(cat)});
+    renderMergeBox(); toast('✅ 合併整理完成');
+  } catch(e){ toast('⚠️ '+e.message, 5000); }
+  finally{ btn.disabled=false; btn.textContent='✨ AI 合併整理'; }
+}
+async function recategorize(btn){
+  const cats = categories(); if (cats.length < 2) return toast('分類少於 2 個，不需要合併');
+  btn.disabled = true; btn.textContent = '分析中…';
+  try{
+    const info = cats.map(([c])=>`「${c}」：${notes.filter(n=>n.category===c).slice(0,6).map(n=>n.title).join('、')}`).join('\n');
+    const out = await callAI({json:true, prompt:`以下是筆記分類與每個分類下的部分筆記標題。請找出意思相同或高度重疊、應該合併的分類（例如「統計」與「統計學」），並給出合併後的名稱。不需要合併的分類不要列出。
+${info}
+輸出 JSON：{"mapping":{"舊分類名":"新分類名"}}`});
+    const map = Object.entries(out.mapping||{}).filter(([a,b])=>a!==b && cats.find(c=>c[0]===a));
+    if (!map.length) return toast('沒有需要合併的分類 👍');
+    showInfo(`<h2>建議合併以下分類</h2><table class="mapping">${map.map(([a,b])=>`<tr><td>${esc(a)}</td><td>→</td><td><b>${esc(b)}</b></td></tr>`).join('')}</table>
+      <div class="foot"><button class="btn" onclick="dlgInfo.close()">取消</button><button class="btn primary" id="applyMap">套用</button></div>`);
+    $('#applyMap').onclick = async ()=>{
+      for (const n of notes){ const t = map.find(([a])=>a===n.category); if (t){ n.category=t[1]; n.updatedAt=Date.now(); await db.put('notes', n);} }
+      dlgInfo.close(); await load(); state.cat = map[0][1]; render(); toast('✅ 已合併分類');
+    };
+  } catch(e){ toast('⚠️ '+e.message, 5000); }
+  finally{ btn.disabled=false; btn.textContent='🧩 合併相似分類'; }
+}
+
+/* ============================================================
+   教科書引用：上傳 PDF / 文字檔 → 本機全文檢索（BM25）
+   ============================================================ */
+function tokenize(s){
+  s = String(s||'').toLowerCase();
+  const out = [];
+  for (const w of s.match(/[a-z0-9][a-z0-9\-]+/g)||[]) out.push(w);
+  for (const run of s.match(/[㐀-鿿豈-﫿]+/g)||[]){
+    if (run.length===1) out.push(run);
+    for (let i=0;i<run.length-1;i++) out.push(run.slice(i,i+2)); // 中文以雙字詞切分
+  }
+  return out;
+}
+function chunkText(text, page){
+  const clean = text.replace(/\s+\n/g,'\n').replace(/[ \t]+/g,' ').trim(); const out=[];
+  for (let i=0;i<clean.length;i+=550){ const t = clean.slice(Math.max(0,i-50), i+550); if (t.trim().length>20) out.push({page, text:t}); }
+  return out;
+}
+async function importRef(file, onProg){
+  let chunks = [];
+  if (file.name.toLowerCase().endsWith('.pdf')){
+    const pdfjs = await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs');
+    pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';
+    const pdf = await pdfjs.getDocument({data: await file.arrayBuffer()}).promise;
+    for (let p=1;p<=pdf.numPages;p++){
+      const tc = await (await pdf.getPage(p)).getTextContent();
+      chunks.push(...chunkText(tc.items.map(i=>i.str+(i.hasEOL?'\n':'')).join(''), p));
+      if (p%10===0) onProg?.(`讀取中 ${p}/${pdf.numPages} 頁`);
+    }
+    if (!chunks.length) throw new Error('這份 PDF 讀不到文字（可能是掃描檔）。可先用 Google 雲端硬碟或 Adobe 做 OCR 再上傳。');
+  } else {
+    const text = await file.text();
+    text.split(/\n(?=#{1,3}\s)|\f/).forEach((sec,i)=>chunks.push(...chunkText(sec, i+1)));
+  }
+  const ref = {id:uid(), name:file.name.replace(/\.(pdf|txt|md)$/i,''), addedAt:Date.now(), unit:file.name.toLowerCase().endsWith('.pdf')?'頁':'段', chunks};
+  await db.put('refs', ref); return ref;
+}
+function searchRefs(query, k=4){
+  const qt = [...new Set(tokenize(query))]; if (!qt.length || !refs.length) return [];
+  const docs = []; for (const r of refs) for (const c of r.chunks) docs.push({r, c});
+  for (const d of docs){
+    if (!d.c._tf){ const tf = new Map(), tk = tokenize(d.c.text); for (const x of tk) tf.set(x,(tf.get(x)||0)+1);
+      Object.defineProperty(d.c,'_tf',{value:tf}); Object.defineProperty(d.c,'_len',{value:tk.length}); }
+    d.tf = d.c._tf; d.len = d.c._len;
+  }
+  const N = docs.length, avg = docs.reduce((s,d)=>s+d.len,0)/N, df = {};
+  for (const t of qt) df[t] = docs.reduce((s,d)=>s+(d.tf.has(t)?1:0),0);
+  const scored = docs.map(d=>{
+    let s=0; const len=d.len;
+    for (const t of qt){ if(!df[t]) continue; const f=d.tf.get(t)||0; if(!f) continue;
+      const idf=Math.log(1+(N-df[t]+.5)/(df[t]+.5)); s+= idf*(f*2.2)/(f+1.2*(1-.75+.75*len/avg)); }
+    return {...d, score:s};
+  }).filter(d=>d.score>0).sort((a,b)=>b.score-a.score);
+  // 同一頁只取一次
+  const seen=new Set(), out=[];
+  const minScore = (scored[0]?.score||0) * 0.35; // 太弱的關聯不顯示
+  for (const d of scored){ if (d.score < minScore) break; const key=d.r.id+':'+d.c.page; if(seen.has(key)) continue; seen.add(key); out.push(d); if(out.length>=k) break; }
+  return out;
+}
+function highlight(text, words){
+  let h = esc(text);
+  for (const w of words.filter(w=>w && w.length>=2).sort((a,b)=>b.length-a.length).slice(0,8))
+    h = h.replace(new RegExp(esc(w).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m=>`<mark>${m}</mark>`);
+  return h;
+}
+function relatedHTML(n){
+  const r = n.related; if (!r) return '';
+  return `${(r.hits||[]).map(h=>`<div class="ref"><div class="src">📖《${esc(h.book)}》第 ${h.page} ${esc(h.unit||'頁')}</div>${highlight(h.text.slice(0,320), n.keywords||[])}…</div>`).join('')}
+    ${r.explain ? `<div class="md" style="margin-top:8px">${md(r.explain)}</div>` : ''}
+    <div class="notice">${r.hits?.length ? '引用段落來自你上傳的教科書；' : ''}${r.general ? '標示「AI 補充」的內容來自 AI 一般知識，請自行查證。' : ''}</div>`;
+}
+async function findRelated(n, btn){
+  btn.disabled = true; btn.textContent = '查找中…';
+  try{
+    const query = [n.title, n.title, ...(n.keywords||[]), ...(n.keywords||[]), n.summary, ...(n.points||[])].join(' ');
+    const hits = searchRefs(query).map(h=>({book:h.r.name, page:h.c.page, unit:h.r.unit, text:h.c.text}));
+    const prompt = `使用者的課堂筆記：
+標題：${n.title}
+摘要：${n.summary}
+重點：
+${(n.points||[]).map(p=>'- '+p).join('\n')}
+
+${hits.length ? `以下是從使用者教科書中檢索到的段落：\n${hits.map((h,i)=>`[${i+1}]《${h.book}》第${h.page}${h.unit}：${h.text}`).join('\n\n')}\n
+請：
+1. 說明教科書段落和筆記的關聯，指出筆記沒寫到、但教科書有補充的重點，每點附上出處，例如（《書名》p.12）。若某段落其實不相關，直接略過。
+2. 最後加一段「## AI 補充」，用一般知識補 1~3 個延伸概念（這部分不要標教科書出處）。` :
+`使用者沒有上傳相關教科書。請提供：
+## AI 補充
+- 2~4 個與這份筆記相關、值得延伸學習的概念或常見考點，每點 1~2 句說明。
+- 如果你知道經典教科書或公開資源中常見的對應章節，可以列出建議查閱的關鍵字（不要捏造頁碼）。`}
+用 Markdown 與${settings.lang}回答，精簡清楚。`;
+    let explain = '';
+    try { explain = await callAI({prompt}); } catch(e){ if (!hits.length) throw e; toast('AI 說明失敗，只顯示教科書段落：'+e.message, 4000); }
+    n.related = {hits, explain, general:true, at:Date.now()};
+    await db.put('notes', n);
+    const el = $('#rel-'+n.id); el.hidden=false; el.innerHTML = relatedHTML(n);
+    if (!refs.length) toast('提示：到「📖 教科書」上傳課本 PDF，就能引用頁碼', 4000);
+  } catch(e){ toast('⚠️ '+e.message, 5000); }
+  finally{ btn.disabled=false; btn.textContent='🔗 相關知識'; }
+}
+function viewRefs(){
+  return `<div class="section-title"><h2>📖 教科書與參考資料</h2></div>
+  <div class="card">
+    <p style="margin-top:0">上傳課本或講義（PDF / TXT / Markdown），之後在每則筆記按「🔗 相關知識」，就會從這些資料找出相關段落並標註頁碼。資料只存在你的瀏覽器。</p>
+    <div class="actions"><button class="btn primary" data-act="add-ref">＋ 上傳教科書</button></div>
+    <input type="file" id="refFile" accept=".pdf,.txt,.md,application/pdf,text/plain" multiple hidden>
+    <div class="progress" id="refProg"></div>
+  </div>
+  ${refs.map(r=>`<div class="card"><h3>📘 ${esc(r.name)}</h3><div class="meta">${new Set(r.chunks.map(c=>c.page)).size} ${r.unit}・${r.chunks.length} 個段落・加入於 ${new Date(r.addedAt).toLocaleDateString()}</div>
+    <div class="actions"><button class="btn danger" data-del-ref="${r.id}">刪除</button></div></div>`).join('')}
+  ${refs.length ? `<div class="card"><label style="margin-top:0">試搜尋教科書</label><input type="text" id="refQ" placeholder="輸入關鍵字，例如：中央極限定理"><div id="refRes"></div></div>` : ''}
+  <div class="card">
+    <h3>🔗 搭配 Gemini Notebook（原 NotebookLM）</h3>
+    <p class="notice" style="font-size:14px">Gemini Notebook 個人版目前沒有公開 API，網頁無法直接寫入。最方便的做法：</p>
+    <ol style="margin-top:4px">
+      <li>按下面按鈕匯出全部筆記（Markdown 檔，依分類整理，含 AI 合併整理）。</li>
+      <li>到 Gemini Notebook 建立筆記本，把教科書 PDF 和這份筆記檔一起加入「來源」。</li>
+      <li>就能在那邊問問題、產生語音摘要或測驗，回答會引用你的筆記和課本。</li>
+    </ol>
+    <p class="notice">小技巧：把匯出的內容貼到一份 Google 文件，再把那份文件加為來源；以後更新 Google 文件後，在 Gemini Notebook 按同步即可。</p>
+    <div class="actions">
+      <button class="btn primary" data-act="export-all-md">⬇️ 匯出全部筆記（.md）</button>
+      <button class="btn" data-act="copy-all-md">📋 複製到剪貼簿</button>
+      <a class="btn" href="https://notebooklm.google.com/" target="_blank" rel="noopener" style="text-decoration:none">開啟 Gemini Notebook ↗</a>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   匯出
+   ============================================================ */
+function noteMD(n){
+  return `### ${n.title}\n*${n.date}｜${n.category}*\n\n${n.summary?n.summary+'\n\n':''}${(n.points||[]).map(p=>'- '+p).join('\n')}\n${n.mine?`\n> 我的補充：${n.mine}\n`:''}${(n.keywords||[]).length?`\n關鍵字：${n.keywords.join('、')}\n`:''}`;
+}
+async function buildMD(filter, title){
+  const list = notes.filter(filter).sort((a,b)=>a.date.localeCompare(b.date));
+  const byCat = {}; for (const n of list) (byCat[n.category] ||= []).push(n);
+  let out = `# ${title}\n\n匯出時間：${new Date().toLocaleString()}\n\n`;
+  for (const [c, arr] of Object.entries(byCat)){
+    out += `## ${c}\n\n`;
+    const m = await kvGet('merge:'+c);
+    if (m) out += `#### 主題總整理\n\n${m.md.replace(/^(#{1,3})\s/gm,'$1### ')}\n\n#### 各日筆記\n\n`;
+    out += arr.map(noteMD).join('\n') + '\n';
+  }
+  return out;
+}
+function download(name, text, type='text/markdown'){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text],{type:type+';charset=utf-8'}));
+  a.download = name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+}
+
+/* ============================================================
+   設定頁
+   ============================================================ */
+function viewSettings(){
+  const p = settings.provider;
+  return `<div class="section-title"><h2>⚙️ 設定</h2></div>
+  <div class="card">
+    <h3>AI 服務</h3>
+    <p class="notice">金鑰只存在這台裝置的瀏覽器（localStorage），不會上傳到 GitHub。請不要把金鑰寫進程式碼。</p>
+    <label>使用的 AI</label>
+    <select id="sProvider"><option value="gemini" ${p==='gemini'?'selected':''}>Google Gemini（有免費額度，推薦）</option><option value="claude" ${p==='claude'?'selected':''}>Anthropic Claude</option></select>
+    <div id="sGemini" ${p==='gemini'?'':'hidden'}>
+      <label>Gemini API 金鑰（到 <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a> 免費申請）</label>
+      <input type="password" id="sGKey" value="${esc(settings.geminiKey)}" placeholder="AIza…">
+      <label>模型</label><input type="text" id="sGModel" value="${esc(settings.geminiModel)}" list="modelList">
+    </div>
+    <div id="sClaude" ${p==='claude'?'':'hidden'}>
+      <label>Claude API 金鑰（到 <a href="https://console.anthropic.com/" target="_blank" rel="noopener">Claude Console</a> 申請）</label>
+      <input type="password" id="sCKey" value="${esc(settings.claudeKey)}" placeholder="sk-ant-…">
+      <label>模型</label><input type="text" id="sCModel" value="${esc(settings.claudeModel)}" list="modelList">
+    </div>
+    <datalist id="modelList"></datalist>
+    <label>筆記語言</label><input type="text" id="sLang" value="${esc(settings.lang)}">
+    <div class="actions">
+      <button class="btn primary" data-act="save-settings">儲存</button>
+      <button class="btn" data-act="list-models">取得可用模型</button>
+      <button class="btn" data-act="test-ai">測試連線</button>
+    </div>
+    <div class="progress" id="sProg"></div>
+  </div>
+  <div class="card">
+    <h3>備份與還原</h3>
+    <p class="notice">資料存在這個瀏覽器裡。換手機/電腦或清除瀏覽器資料前，請先備份。</p>
+    <div class="actions">
+      <button class="btn" data-act="backup">⬇️ 下載完整備份（.json，含照片）</button>
+      <button class="btn" data-act="restore">⬆️ 從備份還原</button>
+      <button class="btn danger" data-act="wipe">清除所有資料</button>
+    </div>
+    <input type="file" id="restoreFile" accept=".json,application/json" hidden>
+    <p class="notice">目前：${notes.length} 則筆記・${categories().length} 個分類・${refs.length} 本教科書</p>
+  </div>`;
+}
+function openSettingsHint(){ state.view='settings'; render(); }
+
+/* ============================================================
+   主渲染 & 事件
+   ============================================================ */
+function emptyState(){
+  return `<div class="empty"><b>還沒有筆記</b>按右下角「＋ 新增筆記」，拍一張 PPT 試試看。<br>
+  ${settings.geminiKey||settings.claudeKey ? '' : '<br>第一次使用請先到 <a href="#" data-goto="settings">⚙️ 設定</a> 填入 AI 金鑰。'}</div>`;
+}
+function render(){
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on', b.dataset.v===state.view));
+  const app = $('#app');
+  app.innerHTML = {date:viewDate, topic:viewTopic, refs:viewRefs, settings:viewSettings}[state.view]();
+  hydrateThumbs(app);
+  if (state.view==='topic' && notes.length) renderMergeBox();
+  $('#fab').hidden = state.view==='settings';
+}
+function showInfo(html){ $('#infoBody').innerHTML = html; dlgInfo.showModal(); }
+
+let editing = null;
+function openEdit(n){
+  editing = n;
+  $('#eTitle').value=n.title; $('#eCat').value=n.category; $('#eDate').value=n.date; $('#eSummary').value=n.summary||'';
+  $('#ePoints').value=(n.points||[]).join('\n'); $('#eKw').value=(n.keywords||[]).join(', '); $('#eMine').value=n.mine||'';
+  $('#catList').innerHTML = categories().map(([c])=>`<option value="${esc(c)}">`).join('');
+  dlgEdit.showModal();
+}
+$('#btnSaveEdit').onclick = async ()=>{
+  const n = editing; if (!n) return;
+  Object.assign(n, { title:$('#eTitle').value.trim()||'未命名筆記', category:$('#eCat').value.trim()||'未分類', date:$('#eDate').value||n.date,
+    summary:$('#eSummary').value.trim(), points:$('#ePoints').value.split('\n').map(s=>s.replace(/^\s*[-•*]\s*/,'').trim()).filter(Boolean),
+    keywords:$('#eKw').value.split(/[,，、]/).map(s=>s.trim()).filter(Boolean), mine:$('#eMine').value.trim(), updatedAt:Date.now() });
+  await db.put('notes', n); dlgEdit.close(); await load(); render(); toast('已儲存');
+};
+
+document.addEventListener('click', async e=>{
+  const t = e.target;
+  const tab = t.closest('#tabs button'); if (tab){ state.view = tab.dataset.v; render(); return; }
+  const go = t.closest('[data-goto]'); if (go){ e.preventDefault(); state.view=go.dataset.goto; render(); return; }
+  const di = t.closest('[data-date]'); if (di){ state.date = di.dataset.date; render(); return; }
+  const ci = t.closest('[data-cat-item]'); if (ci){ state.cat = ci.dataset.catItem; render(); return; }
+  const chip = t.closest('.chip[data-cat]'); if (chip){ state.view='topic'; state.cat=chip.dataset.cat; render(); window.scrollTo(0,0); return; }
+  const th = t.closest('.thumbs img'); if (th){ $('#viewerImg').src = th.src; viewer.showModal(); return; }
+  const rm = t.closest('#previews button'); if (rm){ pending.splice(+rm.dataset.i,1); renderPreviews(); return; }
+  const dr = t.closest('[data-del-ref]'); if (dr){ if (confirm('刪除這本教科書？')){ await db.del('refs', dr.dataset.delRef); await load(); render(); } return; }
+  const btn = t.closest('[data-act]'); if (!btn) return;
+  const card = btn.closest('article[data-id]'); const n = card && notes.find(x=>x.id===card.dataset.id);
+  switch (btn.dataset.act){
+    case 'edit': openEdit(n); break;
+    case 'delete':
+      if (confirm(`刪除「${n.title}」？`)){ await db.del('notes', n.id);
+        for (const id of n.imageIds||[]) if (!notes.some(o=>o.id!==n.id && (o.imageIds||[]).includes(id))) await db.del('images', id);
+        await load(); render(); } break;
+    case 'related': findRelated(n, btn); break;
+    case 'merge': mergeCategory(btn); break;
+    case 'recat': recategorize(btn); break;
+    case 'export-day': download(`筆記_${state.date}.md`, await buildMD(x=>x.date===state.date, `${state.date} 筆記`)); break;
+    case 'export-cat': download(`筆記_${state.cat}.md`, await buildMD(x=>x.category===state.cat, `${state.cat} 筆記`)); break;
+    case 'export-all-md': download(`我的筆記_${today()}.md`, await buildMD(()=>true, '我的課堂筆記')); break;
+    case 'copy-all-md': await navigator.clipboard.writeText(await buildMD(()=>true,'我的課堂筆記')); toast('已複製，可直接貼到 Gemini Notebook 的「複製的文字」來源'); break;
+    case 'add-ref': $('#refFile').click(); break;
+    case 'save-settings': readSettingsForm(); saveSettings(); toast('已儲存設定'); break;
+    case 'list-models': readSettingsForm(); $('#sProg').textContent='讀取中…';
+      try{ const ms = await listModels(); $('#modelList').innerHTML = ms.map(m=>`<option value="${esc(m)}">`).join('');
+        $('#sProg').textContent = `找到 ${ms.length} 個模型，點模型欄位即可選擇。`; } catch(err){ $('#sProg').textContent='⚠️ '+err.message; } break;
+    case 'test-ai': readSettingsForm(); saveSettings(); $('#sProg').textContent='測試中…';
+      try{ const r = await callAI({prompt:'請只回答「連線成功」四個字。'}); $('#sProg').textContent='✅ '+r.trim().slice(0,40); } catch(err){ $('#sProg').textContent='⚠️ '+err.message; } break;
+    case 'backup': {
+      const images = await db.all('images'), kv = await db.all('kv');
+      download(`筆記備份_${today()}.json`, JSON.stringify({app:'daily-notes', v:1, notes, images, refs:refs.map(r=>({...r, chunks:r.chunks.map(({page,text})=>({page,text}))})), kv}), 'application/json'); break; }
+    case 'restore': $('#restoreFile').click(); break;
+    case 'wipe': if (confirm('確定清除所有筆記、照片與教科書？此動作無法復原。')){ for (const s of ['notes','images','refs','kv']) await db.clear(s); imgCache.clear(); await load(); render(); toast('已清除'); } break;
+  }
+});
+function readSettingsForm(){
+  settings.provider = $('#sProvider').value;
+  settings.geminiKey = $('#sGKey').value.trim(); settings.geminiModel = $('#sGModel').value.trim() || DEFAULTS.geminiModel;
+  settings.claudeKey = $('#sCKey').value.trim(); settings.claudeModel = $('#sCModel').value.trim() || DEFAULTS.claudeModel;
+  settings.lang = $('#sLang').value.trim() || DEFAULTS.lang;
+}
+document.addEventListener('change', async e=>{
+  const t = e.target;
+  if (t.id==='sProvider'){ $('#sGemini').hidden = t.value!=='gemini'; $('#sClaude').hidden = t.value!=='claude'; }
+  if (t.id==='file' || t.id==='cam'){ await addFiles([...t.files]); t.value=''; }
+  if (t.id==='refFile'){
+    const prog = $('#refProg');
+    for (const f of [...t.files]){ prog.textContent = `匯入「${f.name}」中…`;
+      try{ await importRef(f, s=>prog.textContent=`「${f.name}」${s}`); } catch(err){ toast('⚠️ '+err.message, 6000); } }
+    t.value=''; await load(); render(); toast('✅ 教科書已加入');
+  }
+  if (t.id==='restoreFile'){
+    try{ const d = JSON.parse(await t.files[0].text()); if (d.app!=='daily-notes') throw new Error('不是本網頁的備份檔');
+      if (!confirm(`還原 ${d.notes.length} 則筆記？（同 ID 的資料會被覆蓋）`)) return;
+      for (const s of ['notes','images','refs','kv']) for (const v of d[s]||[]) await db.put(s, v);
+      await load(); render(); toast('✅ 還原完成'); } catch(err){ toast('⚠️ '+err.message, 5000); }
+    t.value='';
+  }
+});
+document.addEventListener('input', e=>{
+  if (e.target.id==='q'){ state.q = e.target.value.trim(); if (state.view==='refs'||state.view==='settings') state.view='date'; render(); $('#q').focus(); }
+  if (e.target.id==='refQ'){
+    const q = e.target.value.trim(), hits = q ? searchRefs(q, 5) : [];
+    $('#refRes').innerHTML = hits.map(h=>`<div class="ref"><div class="src">📖《${esc(h.r.name)}》第 ${h.c.page} ${h.r.unit}</div>${highlight(h.c.text.slice(0,300), q.split(/\s+/))}…</div>`).join('') || (q?'<p class="notice">找不到相關段落</p>':'');
+  }
+});
+
+// 新增筆記視窗
+$('#fab').onclick = ()=>{ $('#addDate').value = today(); $('#addProg').textContent=''; dlgAdd.showModal(); };
+$('#drop').onclick = ()=> $('#file').click();
+$('#btnCam').onclick = ()=> $('#cam').click();
+$('#btnProcess').onclick = processAdd;
+const drop = $('#drop');
+drop.ondragover = e=>{ e.preventDefault(); drop.style.borderColor='var(--accent)'; };
+drop.ondragleave = ()=> drop.style.borderColor='';
+drop.ondrop = e=>{ e.preventDefault(); drop.style.borderColor=''; addFiles([...e.dataTransfer.files]); };
+document.addEventListener('paste', e=>{ if (dlgAdd.open){ const fs=[...e.clipboardData.files]; if (fs.length) addFiles(fs); } });
+
+await load(); render();
+</script>
+</body>
+</html>
