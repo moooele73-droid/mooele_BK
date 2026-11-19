@@ -1,0 +1,59 @@
+# 📒 每日筆記整理
+
+把上課拍的 PPT 照片丟進來，AI 會自動辨識文字、整理重點、分類，並把不同天的相似內容合併成主題筆記。整個網站只有一個 `index.html`，可以直接放在 GitHub Pages 上，不需要伺服器。
+
+## 功能
+
+| 功能 | 說明 |
+|---|---|
+| 📷 拍照辨識 | 手機可直接開相機拍照，也可以一次選多張照片。AI 會辨識文字，把同主題的投影片合併成一則筆記 |
+| 🗂 自動分類 | 會優先沿用你已經有的分類，避免「統計」和「統計學」這種重複分類 |
+| 🧩 合併相似分類 | 在「總整理」頁按一下，AI 會建議要合併哪些分類，確認後才會套用 |
+| 📅 日期閱覽 | 依日期看每天上了什麼 |
+| 📚 總筆記整理 | 依分類看；按「AI 合併整理」會把不同天的筆記去除重複，依概念重新整理，並標出每條重點來自哪一天 |
+| 📖 教科書引用 | 上傳課本 PDF/TXT，每則筆記按「🔗 相關知識」就會找出課本裡的相關段落（附頁碼），再由 AI 說明關聯 |
+| 🔗 Gemini Notebook（原 NotebookLM） | 一鍵匯出 Markdown，加入 Gemini Notebook 當作來源 |
+| 💾 備份 | 可匯出或匯入完整 JSON 備份（含照片） |
+
+## 部署到 GitHub Pages（約 3 分鐘）
+
+1. 在 GitHub 建立新的 repository，例如 `my-notes`（Public 或 Private 都可以，Private 需要付費方案才能使用 Pages）。
+2. 上傳 `index.html`（和這份 README）到 repository 根目錄。
+3. 進入 **Settings → Pages**，在 *Build and deployment* 的 Source 選 **Deploy from a branch**，Branch 選 `main`、資料夾選 `/ (root)`，按 Save。
+4. 等一到兩分鐘，網址會是 `https://你的帳號.github.io/my-notes/`。
+5. 在手機用瀏覽器打開，然後選「加入主畫面」，用起來就像 App。
+
+## 第一次使用：設定 AI 金鑰
+
+1. 到 [Google AI Studio](https://aistudio.google.com/apikey) 申請免費的 Gemini API 金鑰（或改用 Claude 金鑰）。
+2. 打開網頁 → **⚙️ 設定** → 貼上金鑰 → 按「測試連線」。
+3. 如果模型名稱出錯，可以按「取得可用模型」重新選一個。
+
+> ⚠️ **金鑰安全**：金鑰只存在你自己瀏覽器的 localStorage，**不會**進到 GitHub。千萬不要把金鑰寫進 `index.html` 再推上去。建議在 Google Cloud Console 把金鑰限制為只能用 Generative Language API，並設定 HTTP referrer 只允許你的 `github.io` 網址。
+
+## 資料存在哪裡？
+
+所有筆記、照片和教科書都存在**你當下使用的瀏覽器**（IndexedDB）裡，所以：
+- 手機和電腦的資料不會自動同步，換裝置時請用「設定 → 下載完整備份 / 從備份還原」。
+- 清除瀏覽器資料會讓資料消失，請定期備份。
+- 照片只會傳給你選的 AI 服務（Google 或 Anthropic）做辨識，不會傳到其他地方。
+
+## 關於 Gemini Notebook（原 NotebookLM）
+
+NotebookLM 在 2026 年 7 月改名為 Gemini Notebook。它的個人版目前沒有公開 API（只有企業版的 Google Cloud 提供），所以網頁沒辦法直接把筆記寫進去。建議的流程：
+
+1. 在「📖 教科書」頁按 **匯出全部筆記（.md）**，或按 **複製到剪貼簿**。
+2. 在 Gemini Notebook 建立筆記本，加入課本 PDF 和這份筆記當作來源（也可以貼成「複製的文字」）。
+3. 想自動更新的話，可以把筆記貼到一份 Google 文件，再把這份文件加為來源，之後在 Gemini Notebook 按同步就好。
+
+## 常見問題
+
+- **PDF 讀不到文字？** 掃描版的 PDF 裡面只有圖片，請先用 Google 雲端硬碟（用 Google 文件開啟）或 Adobe 做 OCR 後再上傳。
+- **iPhone 的 HEIC 照片？** Safari 選照片時會自動轉成 JPEG，可以直接用。
+- **費用？** Gemini 有免費額度，一般每天拍幾十張照片通常都在額度內，實際以 Google 公告為準。
+
+## 自動提示更新
+
+網頁打開時，以及從其他 App 切回來時，會檢查 GitHub 上有沒有新版本。有的話上方會跳出「有新版本可以更新」，按「更新」就會載入新版，筆記資料不會受影響。
+
+> 如果你自己改了 `index.html`，請記得把檔案最下面的 `const APP_VERSION = '…'` 改成新的值（例如 `2026.11.20-1`），否則網頁不會發現有新版本。

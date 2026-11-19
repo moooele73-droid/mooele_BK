@@ -107,6 +107,12 @@ input[type=date]::-webkit-date-and-time-value{text-align:left}
 .progress{font-size:13px;color:var(--accent);margin-top:10px;min-height:20px}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:99;max-width:90vw}
 #toast.show{opacity:1}
+#updateBar{position:fixed;left:50%;transform:translateX(-50%);top:calc(12px + env(safe-area-inset-top));z-index:60;
+  width:min(460px,calc(100vw - 24px));background:var(--card);border:1px solid var(--accent);border-radius:14px;
+  box-shadow:0 8px 28px rgba(0,0,0,.18);padding:12px 14px;display:flex;align-items:center;gap:10px}
+#updateBar[hidden]{display:none}
+#updateBar .txt{flex:1;font-size:14px;line-height:1.45}
+#updateBar .txt small{display:block;color:var(--muted);font-size:12px}
 #viewer{width:auto;max-width:96vw;background:#000}
 #viewer img{display:block;max-width:96vw;max-height:88vh}
 .section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 12px;flex-wrap:wrap}
@@ -132,6 +138,11 @@ pre.raw{white-space:pre-wrap;font-size:12.5px;background:var(--bg);padding:8px;b
 <main id="app"></main>
 <button class="fab" id="fab">＋ 新增筆記</button>
 <div id="toast"></div>
+<div id="updateBar" hidden>
+  <div class="txt">🎉 有新版本可以更新<small id="updateVer"></small></div>
+  <button class="btn" id="updLater">稍後</button>
+  <button class="btn primary" id="updNow">更新</button>
+</div>
 
 <!-- 新增筆記 -->
 <dialog id="dlgAdd"><div class="dlg">
@@ -842,6 +853,40 @@ drop.ondrop = e=>{ e.preventDefault(); drop.style.borderColor=''; addFiles([...e
 document.addEventListener('paste', e=>{ if (dlgAdd.open){ const fs=[...e.clipboardData.files]; if (fs.length) addFiles(fs); } });
 
 await load(); render();
+
+/* ============================================================
+   版本檢查：有新版時主動詢問要不要更新
+   ⚠️ 每次修改並上傳 index.html 時，請把 APP_VERSION 改成新的值
+   ============================================================ */
+const APP_VERSION = '2026.11.19-3';
+let lastCheck = 0;
+async function checkUpdate(force=false){
+  if (!/^https?:/.test(location.protocol)) return;          // 本機直接開檔案時不檢查
+  if (!force && Date.now() - lastCheck < 5*60*1000) return;  // 最多 5 分鐘檢查一次
+  lastCheck = Date.now();
+  try{
+    const r = await fetch(location.pathname + '?check=' + Date.now(), {cache:'no-store'});
+    if (!r.ok) return;
+    const latest = (await r.text()).match(/const APP_VERSION = '([^']+)'/)?.[1];
+    if (!latest || latest === APP_VERSION) return;
+    if (sessionStorage.getItem('dn-skip') === latest) return; // 這次開啟時已按過「稍後」
+    $('#updateVer').textContent = `目前 ${APP_VERSION} → 最新 ${latest}（筆記資料不受影響）`;
+    $('#updateBar').hidden = false;
+    $('#updLater').onclick = () => { sessionStorage.setItem('dn-skip', latest); $('#updateBar').hidden = true; };
+    $('#updNow').onclick = () => {
+      if (dlgAdd.open && pending.length && !confirm('新增筆記視窗裡還有尚未整理的照片，更新後會消失。確定要更新嗎？')) return;
+      location.replace(location.pathname + '?v=' + encodeURIComponent(latest)); // 加上參數，避開舊快取
+    };
+  } catch {}
+}
+checkUpdate(true);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkUpdate(); });
+setInterval(checkUpdate, 30*60*1000);
+// 更新完成後把網址上的 ?v= 拿掉，並提示
+if (new URLSearchParams(location.search).has('v')){
+  history.replaceState(null, '', location.pathname);
+  toast(`✅ 已更新到 ${APP_VERSION}`);
+}
 </script>
 </body>
 </html>
