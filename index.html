@@ -7,152 +7,186 @@
 <meta name="theme-color" content="#1f6f68">
 <style>
 :root{
-  --bg:#f6f4ef; --card:#fffdf9; --ink:#1d2321; --muted:#6b7370; --line:#e3ded3;
-  --accent:#1f6f68; --accent-soft:#e2efec; --warn:#b5482f; --mark:#fff0b3;
-  --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);
+  --bg:#f4efe6; --card:#fdfaf5; --ink:#3d362f; --muted:#9b8f82; --line:#e9e1d5; --soft:#f6f0e7;
+  --accent:#a3825f; --accent-soft:#efe5d8; --warn:#c06c55; --mark:#fff0b3;
+  --radius:24px; --shadow:0 2px 14px rgba(120,90,50,.07);
 }
 @media (prefers-color-scheme:dark){
-  :root{--bg:#141716;--card:#1d2120;--ink:#e8ebe9;--muted:#9aa3a0;--line:#2e3432;
-  --accent:#5fb8ad;--accent-soft:#213431;--warn:#e07a62;--mark:#5a4a12;}
+  :root{--bg:#1c1915;--card:#26211b;--ink:#efe8de;--muted:#a3988b;--line:#3a332a;--soft:#2e2820;
+  --accent:#c9a47e;--accent-soft:#3a3025;--warn:#e08d74;--mark:#5a4a12;}
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);
-  font:15px/1.65 -apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
+  font:16px/1.65 -apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
 button,input,select,textarea{font:inherit;color:inherit}
-header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);
-  backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.bar{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px;flex-wrap:wrap}
-.brand{font-weight:700;font-size:17px;margin-right:auto;letter-spacing:.02em}
-.brand span{color:var(--accent)}
-nav{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px}
-nav button{border:0;background:none;padding:6px 14px;border-radius:999px;cursor:pointer;color:var(--muted);white-space:nowrap}
-nav button.on{background:var(--accent);color:#fff}
-.search{flex:1 1 180px;max-width:260px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card)}
-main{max-width:1100px;margin:0 auto;padding:16px 16px 110px}
-.layout{display:grid;grid-template-columns:230px 1fr;gap:18px;align-items:start}
-@media (max-width:520px){nav{width:100%;justify-content:space-between}nav button{padding:6px 8px;font-size:14px}.search{max-width:none}}
-@media (max-width:760px){.layout{grid-template-columns:1fr}.side{position:static!important;display:flex;overflow-x:auto;gap:6px;padding-bottom:4px}
-  .side .item{flex:0 0 auto}.side h4{display:none}}
-.side{position:sticky;top:70px}
-.side h4{margin:4px 6px 8px;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.08em}
-.item{display:flex;justify-content:space-between;gap:8px;padding:8px 12px;border-radius:10px;cursor:pointer;border:1px solid transparent}
-.item:hover{background:var(--card)}
-.item.on{background:var(--card);border-color:var(--line);box-shadow:var(--shadow)}
-.item .n{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);margin-bottom:14px}
-.card h3{margin:0 0 4px;font-size:17px}
-.meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:12.5px;margin-bottom:8px}
-.chip{display:inline-block;padding:1px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:12px;cursor:pointer}
-.kw{display:inline-block;padding:0 7px;border:1px solid var(--line);border-radius:6px;font-size:12px;color:var(--muted);margin:2px 4px 0 0}
+a{color:var(--accent)}
+/* ---------- 頂部 ---------- */
+header{background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{max-width:760px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 16px 14px;display:flex;flex-direction:column;gap:12px}
+.toprow{display:flex;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:23px;letter-spacing:.04em;margin-right:auto;white-space:nowrap}
+.logo{width:34px;height:34px;border-radius:11px;background:var(--accent);display:grid;place-items:center;flex:0 0 auto}
+.logo::after{content:"";width:15px;height:15px;border-radius:5px;background:var(--card)}
+.pill-select{appearance:none;-webkit-appearance:none;border:1px solid var(--line);background:var(--card);border-radius:999px;
+  padding:8px 34px 8px 16px;font-size:15px;max-width:52vw;box-shadow:var(--shadow);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='14' viewBox='0 0 12 14'%3E%3Cpath d='M2 5l4-3 4 3M2 9l4 3 4-3' fill='none' stroke='%239b8f82' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center}
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px;box-shadow:var(--shadow)}
+nav button{border:0;background:none;padding:9px 4px;border-radius:999px;cursor:pointer;color:var(--muted);white-space:nowrap;font-size:16px;letter-spacing:.06em}
+nav button.on{background:var(--accent);color:#fff;font-weight:600}
+.search-wrap{position:relative}
+.search-wrap::before{content:"🔍";position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.8}
+.search{width:100%;padding:11px 16px 11px 44px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:16px;box-shadow:var(--shadow)}
+.search::placeholder{color:var(--muted)}
+main{max-width:760px;margin:0 auto;padding:16px 16px 120px}
+/* ---------- 卡片 / 列表 ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);margin-bottom:14px}
+.card h3{margin:0 0 6px;font-size:17px}
+.ledger{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:6px 10px 10px;box-shadow:var(--shadow);margin-bottom:14px}
+.day-h{display:flex;justify-content:space-between;align-items:center;padding:16px 12px 6px;color:var(--muted);font-size:15px;font-variant-numeric:tabular-nums}
+.day-h .r{display:flex;align-items:center;gap:6px}
+.icon-btn{border:0;background:none;color:var(--muted);cursor:pointer;padding:2px 6px;border-radius:8px;font-size:14px}
+.icon-btn:hover{background:var(--soft)}
+.entry{border-radius:18px;transition:background .15s}
+.entry + .entry{border-top:1.5px dashed var(--line)}
+.entry.open{background:var(--soft);border-top-color:transparent}
+.entry.open + .entry{border-top-color:transparent}
+.entry-head{display:flex;align-items:center;gap:14px;padding:14px 10px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.tile{width:50px;height:50px;border-radius:15px;flex:0 0 auto;display:grid;place-items:center;color:#fff;font-weight:700;font-size:19px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tile img{width:100%;height:100%;object-fit:cover}
+.et{flex:1;min-width:0}
+.et .tt{font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.et .st{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.er{color:var(--warn);font-weight:700;font-size:17px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.er .chev{display:inline-block;color:var(--muted);font-weight:400;margin-left:6px;transition:transform .2s}
+.entry.open .chev{transform:rotate(90deg)}
+.entry-body{display:none;padding:0 14px 14px}
+.entry.open .entry-body{display:block}
+.meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:13px;margin-bottom:8px}
+.chip{display:inline-block;padding:2px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:13px;cursor:pointer;font-weight:500}
+.kw{display:inline-block;padding:1px 9px;border:1px solid var(--line);border-radius:999px;font-size:12.5px;color:var(--muted);background:var(--card)}
 .summary{color:var(--muted);margin:4px 0 8px}
-.card ul{margin:6px 0;padding-left:20px}
-.thumbs{display:flex;gap:6px;overflow-x:auto;margin-top:8px}
-.thumbs img{height:64px;border-radius:8px;border:1px solid var(--line);cursor:zoom-in;object-fit:cover}
-.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.btn{border:1px solid var(--line);background:var(--card);padding:6px 12px;border-radius:9px;cursor:pointer;font-size:13.5px}
+.entry-body ul,.card ul{margin:6px 0;padding-left:20px}
+.thumbs{display:flex;gap:8px;overflow-x:auto;margin-top:10px}
+.thumbs img{height:70px;border-radius:12px;border:1px solid var(--line);cursor:zoom-in;object-fit:cover}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{border:1px solid var(--line);background:var(--card);padding:7px 15px;border-radius:999px;cursor:pointer;font-size:14px;text-decoration:none;color:var(--ink);display:inline-block}
 .btn:hover{border-color:var(--accent);color:var(--accent)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn.primary:hover{filter:brightness(1.08);color:#fff}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.btn.primary:hover{filter:brightness(1.06);color:#fff}
 .btn.danger:hover{border-color:var(--warn);color:var(--warn)}
 .btn:disabled{opacity:.5;cursor:wait}
-.fab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:30;border:0;border-radius:999px;
-  background:var(--accent);color:#fff;padding:14px 22px;font-size:16px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.2);cursor:pointer}
+.fab{position:fixed;right:20px;bottom:calc(22px + env(safe-area-inset-bottom));z-index:30;border:0;border-radius:999px;
+  background:var(--accent);color:#fff;padding:15px 24px;font-size:17px;font-weight:700;letter-spacing:.04em;box-shadow:0 8px 22px rgba(120,85,45,.3);cursor:pointer}
 .empty{text-align:center;color:var(--muted);padding:60px 20px}
-.empty b{display:block;font-size:18px;color:var(--ink);margin-bottom:6px}
+.empty b{display:block;font-size:19px;color:var(--ink);margin-bottom:6px}
 .md h1,.md h2,.md h3{margin:14px 0 6px;line-height:1.35}
 .md h1{font-size:19px}.md h2{font-size:17px}.md h3{font-size:15.5px}
 .md p{margin:6px 0}.md ul,.md ol{margin:4px 0;padding-left:22px}
 .md code{background:var(--accent-soft);padding:0 4px;border-radius:4px;font-size:.92em}
 .md blockquote{margin:6px 0;padding:4px 12px;border-left:3px solid var(--accent);color:var(--muted)}
-.ref{border-left:3px solid var(--accent);padding:6px 12px;margin:8px 0;background:var(--bg);border-radius:0 8px 8px 0;font-size:13.5px}
-.ref .src{font-size:12px;color:var(--accent);font-weight:600}
+.ref{border-left:3px solid var(--accent);padding:8px 12px;margin:8px 0;background:var(--bg);border-radius:0 12px 12px 0;font-size:14px}
+.ref .src{font-size:12.5px;color:var(--accent);font-weight:600}
 mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
-.related{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
-.notice{font-size:12.5px;color:var(--muted)}
-.stale{color:var(--warn);font-size:12.5px}
-/* dialogs */
-dialog{border:0;border-radius:18px;padding:0;width:min(640px,94vw);max-height:90vh;background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.3)}
-dialog::backdrop{background:rgba(0,0,0,.4)}
-.dlg{padding:18px 20px;overflow:auto;max-height:90vh}
-.dlg h2{margin:0 0 12px;font-size:18px}
-label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
-input[type=text],input[type=password],input[type=date],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg)}
+.related{margin-top:10px;padding-top:10px;border-top:1.5px dashed var(--line)}
+.notice{font-size:13px;color:var(--muted)}
+.stale{color:var(--warn);font-size:13px;margin-top:6px}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 4px 14px;flex-wrap:wrap}
+.section-title h2{margin:0;font-size:21px}
+.sub-h{color:var(--muted);font-size:14px;font-weight:600;margin:20px 6px 8px}
+details summary{cursor:pointer;color:var(--muted);font-size:13.5px}
+pre.raw{white-space:pre-wrap;font-size:13px;background:var(--bg);padding:10px;border-radius:12px;max-height:240px;overflow:auto;font-family:inherit}
+.mapping td{padding:4px 8px;border-bottom:1px dashed var(--line)}
+/* ---------- 用量 ---------- */
+.quota{background:var(--soft);border-radius:18px;padding:14px 16px;margin:10px 0}
+.qnum{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.qnum b{font-size:32px;color:var(--accent);line-height:1.1;font-variant-numeric:tabular-nums}
+.qnum small{color:var(--muted);font-size:13px}
+.qbar{height:10px;background:var(--accent-soft);border-radius:99px;overflow:hidden;margin:8px 0 4px}
+.qbar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.utable{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0}
+.utable th,.utable td{text-align:left;padding:7px 4px;border-bottom:1.5px dashed var(--line);font-variant-numeric:tabular-nums}
+.utable th{color:var(--muted);font-weight:500}
+.inline{display:flex;gap:8px;align-items:center}.inline input{flex:1}
+/* ---------- 對話框 ---------- */
+dialog{border:0;border-radius:26px;padding:0;width:min(640px,94vw);max-height:90vh;background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(60,40,20,.3)}
+dialog::backdrop{background:rgba(50,35,20,.35)}
+.dlg{padding:20px 22px;overflow:auto;max-height:90vh}
+.dlg h2{margin:0 0 12px;font-size:19px}
+label{display:block;font-size:13.5px;color:var(--muted);margin:12px 0 5px}
+input[type=text],input[type=password],input[type=date],select,textarea{width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
 textarea{min-height:80px;resize:vertical}
 .row{display:flex;gap:12px}.row>*{flex:1;min-width:0}
-/* iPhone Safari 的日期欄有固定最小寬度，會撐破版面 → 重設外觀 */
-input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:42px;text-align:left}
+input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:44px;text-align:left}
 input[type=date]::-webkit-date-and-time-value{text-align:left}
-@media (max-width:600px){
-  .row{flex-direction:column;gap:0}
-  /* 字級 16px 以上，iPhone 點輸入框時才不會自動放大畫面 */
-  input[type=text],input[type=password],input[type=date],input[type=search],select,textarea{font-size:16px}
-  dialog{width:100vw;max-width:100vw;max-height:92vh;margin:auto 0 0;border-radius:20px 20px 0 0}
-  .dlg{padding:18px 16px calc(14px + env(safe-area-inset-bottom));max-height:92vh}
-  .drop{padding:18px 12px}
-  .foot{flex-wrap:wrap}
-  .foot .btn{flex:1;padding:11px 8px;font-size:15px}
-  .foot .btn.primary{flex-basis:100%;order:-1}
-  .bar{gap:8px;padding:8px 12px}
-  .brand{font-size:16px}
-  main{padding:12px 12px 110px}
-  .card{padding:14px}
-}
-.drop{border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;cursor:pointer;color:var(--muted)}
+.drop{border:2px dashed var(--line);border-radius:20px;padding:22px;text-align:center;cursor:pointer;color:var(--muted);background:var(--soft)}
 .drop:hover{border-color:var(--accent);color:var(--accent)}
 .previews{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px}
 .previews div{position:relative}
-.previews img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
-.previews button{position:absolute;top:3px;right:3px;border:0;border-radius:50%;width:22px;height:22px;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;line-height:1}
+.previews img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
+.previews button{position:absolute;top:4px;right:4px;border:0;border-radius:50%;width:24px;height:24px;background:rgba(0,0,0,.55);color:#fff;cursor:pointer;line-height:1}
 .foot{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;position:sticky;bottom:0;background:var(--card);padding-top:8px}
-.progress{font-size:13px;color:var(--accent);margin-top:10px;min-height:20px}
-#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:99;max-width:90vw}
+.progress{font-size:13.5px;color:var(--accent);margin-top:10px;min-height:20px}
+#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:99;max-width:90vw}
 #toast.show{opacity:1}
+@media (max-width:600px){
+  .row{flex-direction:column;gap:0}
+  input[type=text],input[type=password],input[type=date],input[type=search],select,textarea{font-size:16px}
+  dialog{width:100vw;max-width:100vw;max-height:92vh;margin:auto 0 0;border-radius:26px 26px 0 0}
+  .dlg{padding:20px 16px calc(14px + env(safe-area-inset-bottom));max-height:92vh}
+  .drop{padding:18px 12px}
+  .foot{flex-wrap:wrap}
+  .foot .btn{flex:1;padding:12px 8px;font-size:15px}
+  .foot .btn.primary{flex-basis:100%;order:-1}
+  .brand{font-size:21px}
+  main{padding:14px 12px 120px}
+  .card{padding:16px}
+  .ledger{padding:4px 6px 8px}
+  .entry-head{gap:12px;padding:13px 8px}
+  .entry-body{padding:0 10px 12px}
+}
 /* 重點標記顏色：黃=重點、粉=易錯、綠=補充 */
-.hl-y{background:#ffef9e}.hl-p{background:#ffd6e2}.hl-g{background:#cdeed4}
+.hl-y{background:#fbeaa6}.hl-p{background:#f8d5dc}.hl-g{background:#d3ebd5}
 @media (prefers-color-scheme:dark){.hl-y{background:#5c4b0e}.hl-p{background:#5a2433}.hl-g{background:#1f4a2b}}
 mark.hl-y,mark.hl-p,mark.hl-g{color:inherit;border-radius:3px;padding:0 1px}
-.hl-box{border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:6px 0 10px;background:var(--bg)}
-.hl-box .t{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:2px;letter-spacing:.04em}
-.hl{display:flex;gap:6px;align-items:flex-start;padding:6px 9px;border-radius:8px;margin:5px 0;font-size:14.5px;font-weight:500;line-height:1.5}
+.hl-box{border:1px solid var(--line);border-radius:16px;padding:8px 10px;margin:4px 0 10px;background:var(--card)}
+.hl-box .t{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:2px;letter-spacing:.04em}
+.hl{display:flex;gap:6px;align-items:flex-start;padding:7px 10px;border-radius:12px;margin:5px 0;font-size:15px;font-weight:500;line-height:1.5;color:#3d362f}
+@media (prefers-color-scheme:dark){.hl{color:var(--ink)}.hl small,.hl button{color:var(--muted)}}
 .hl span{flex:1}
-.hl small{color:var(--muted);font-weight:400}
-.hl button{border:0;background:none;color:var(--muted);cursor:pointer;padding:0 4px;font-size:16px;line-height:1.3}
-li[class^=hl-]{border-radius:6px;padding:1px 5px}
-.star{border:0;background:none;cursor:pointer;color:var(--muted);padding:0 3px;font-size:15px;vertical-align:baseline}
+.hl small{color:#8a7e70;font-weight:400}
+.hl button{border:0;background:none;color:#8a7e70;cursor:pointer;padding:0 4px;font-size:17px;line-height:1.3}
+li[class^=hl-]{border-radius:8px;padding:1px 6px}
+.star{border:0;background:none;cursor:pointer;color:var(--muted);padding:0 3px;font-size:16px;vertical-align:baseline}
 .star.on{color:#c98f00}
-#selTool{position:fixed;z-index:70;background:var(--ink);border-radius:12px;padding:6px;display:flex;gap:6px;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#selTool{position:fixed;z-index:70;background:var(--ink);border-radius:999px;padding:6px;display:flex;gap:6px;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 #selTool[hidden]{display:none}
-#selTool span{color:var(--bg);padding:0 2px 0 4px}
-#selTool button{border:0;border-radius:8px;padding:7px 12px;cursor:pointer;font-size:14px;color:#222;font-weight:600}
-@media (prefers-color-scheme:dark){#selTool button{color:#eee}}
-.legend{font-size:12px;color:var(--muted);margin-top:4px}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 3px 0 8px;vertical-align:-1px}
+#selTool span{color:var(--bg);padding:0 2px 0 8px}
+#selTool button{border:0;border-radius:999px;padding:7px 14px;cursor:pointer;font-size:14px;color:#3d362f;font-weight:600}
 #updateBar{position:fixed;left:50%;transform:translateX(-50%);top:calc(12px + env(safe-area-inset-top));z-index:60;
-  width:min(460px,calc(100vw - 24px));background:var(--card);border:1px solid var(--accent);border-radius:14px;
-  box-shadow:0 8px 28px rgba(0,0,0,.18);padding:12px 14px;display:flex;align-items:center;gap:10px}
+  width:min(460px,calc(100vw - 24px));background:var(--card);border:1px solid var(--accent);border-radius:20px;
+  box-shadow:0 8px 28px rgba(60,40,20,.18);padding:12px 14px;display:flex;align-items:center;gap:10px}
 #updateBar[hidden]{display:none}
 #updateBar .txt{flex:1;font-size:14px;line-height:1.45}
 #updateBar .txt small{display:block;color:var(--muted);font-size:12px}
-#viewer{width:auto;max-width:96vw;background:#000}
+#viewer{width:auto;max-width:96vw;background:#000;border-radius:14px}
 #viewer img{display:block;max-width:96vw;max-height:88vh}
-.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 12px;flex-wrap:wrap}
-.section-title h2{margin:0;font-size:20px}
-details summary{cursor:pointer;color:var(--muted);font-size:13px}
-pre.raw{white-space:pre-wrap;font-size:12.5px;background:var(--bg);padding:8px;border-radius:8px;max-height:240px;overflow:auto}
-.mapping td{padding:3px 8px;border-bottom:1px solid var(--line)}
 </style>
 </head>
 <body>
 <header>
   <div class="bar">
-    <div class="brand">📒 每日<span>筆記</span>整理</div>
-    <input class="search" id="q" type="search" placeholder="搜尋筆記…">
+    <div class="toprow">
+      <div class="brand"><span class="logo"></span>每日筆記</div>
+      <select class="pill-select" id="catFilter" aria-label="分類"><option value="">全部分類</option></select>
+    </div>
     <nav id="tabs">
-      <button data-v="date" class="on">📅 日期</button>
-      <button data-v="topic">📚 總整理</button>
-      <button data-v="refs">📖 教科書</button>
-      <button data-v="settings">⚙️ 設定</button>
+      <button data-v="date" class="on">日期</button>
+      <button data-v="topic">總整理</button>
+      <button data-v="refs">教科書</button>
+      <button data-v="settings">設定</button>
     </nav>
+    <div class="search-wrap"><input class="search" id="q" type="search" placeholder="搜尋筆記：標題、重點、關鍵字、分類…"></div>
   </div>
 </header>
 <main id="app"></main>
@@ -313,6 +347,37 @@ function extractJSON(text){
   throw new Error('AI 回傳的格式無法解析');
 }
 const GEMINI_FALLBACKS = ['gemini-flash-lite-latest', 'gemini-2.5-flash'];
+
+/* ---------- 用量記錄（Google 沒有提供查剩餘額度的 API，所以由網頁自己記；只存在這台裝置） ---------- */
+const ptDay = (d=new Date()) => new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).format(d);
+function quotaResetTime(){ // Gemini 每日額度在美國太平洋時間午夜重置
+  const now = new Date();
+  const off = new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',timeZoneName:'shortOffset'}).formatToParts(now).find(p=>p.type==='timeZoneName')?.value || 'GMT-8';
+  const h = parseInt(off.replace('GMT','')) || -8;
+  const [y,m,d] = ptDay(now).split('-').map(Number);
+  return new Date(Date.UTC(y, m-1, d+1, -h, 0));
+}
+const hhmm = d => d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false});
+function getUsage(){
+  let u; try { u = JSON.parse(localStorage.getItem('dn-usage')||'{}'); } catch { u = {}; }
+  u.days ||= {}; u.days[ptDay()] ||= {};
+  for (const k of Object.keys(u.days).sort().slice(0,-14)) delete u.days[k]; // 只留 14 天
+  return u;
+}
+function saveUsage(u){
+  localStorage.setItem('dn-usage', JSON.stringify(u));
+  const box = document.getElementById('usageBox'); if (box) box.innerHTML = usageInner();
+}
+function recordUsage(provider, model, meta){
+  const u = getUsage(), day = u.days[ptDay()], m = day[provider+':'+model] ||= {req:0, inTok:0, outTok:0};
+  m.req++;
+  if (meta){
+    m.inTok  += meta.promptTokenCount ?? meta.input_tokens ?? 0;
+    m.outTok += (meta.candidatesTokenCount||0) + (meta.thoughtsTokenCount||0) + (meta.output_tokens||0);
+  }
+  saveUsage(u);
+}
+function recordLimit(model, msg){ const u = getUsage(); u.lastLimit = {model, msg:String(msg).slice(0,300), at:Date.now()}; saveUsage(u); }
 async function callAI({prompt, images=[], json=false, onStatus}){
   if (window.__mockAI) return window.__mockAI({prompt, images, json, onStatus}); // 測試用
   const p = settings.provider;
@@ -334,8 +399,9 @@ async function callAI({prompt, images=[], json=false, onStatus}){
         res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
           method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':key}, body });
         data = await res.json().catch(()=>({}));
-        if (res.ok){ if (model !== models[0]) onStatus?.(`（已改用備用模型 ${model}）`); break outer; }
+        if (res.ok){ recordUsage('gemini', model, data.usageMetadata); if (model !== models[0]) onStatus?.(`（已改用備用模型 ${model}）`); break outer; }
         lastErr = data.error?.message || res.status;
+        if (res.status===429 && /quota|exhaust|exceed/i.test(lastErr)) recordLimit(model, lastErr);
         const busy = [429,500,502,503,504].includes(res.status) || /overload|high demand|unavailable|try again/i.test(lastErr);
         const missing = res.status===404 || /not found|not supported/i.test(lastErr);
         if (missing) continue outer;            // 模型不存在 → 直接換下一個
@@ -347,6 +413,7 @@ async function callAI({prompt, images=[], json=false, onStatus}){
       }
       onStatus?.(`⏳ ${model} 忙碌中，改用備用模型…`);
     }
+    if (!res.ok && /quota|exhaust|exceed/i.test(lastErr)) throw new Error(`今天的免費額度可能已經用完，會在 ${hhmm(quotaResetTime())} 重置。也可以到設定改用 Claude。照片會保留。`);
     if (!res.ok) throw new Error('Gemini 伺服器目前太忙，所有模型都暫時無法使用，請過幾分鐘再按一次（照片會保留）。原始訊息：' + lastErr);
     text = (data.candidates?.[0]?.content?.parts||[]).filter(x=>!x.thought).map(x=>x.text||'').join('');
   } else {
@@ -359,6 +426,7 @@ async function callAI({prompt, images=[], json=false, onStatus}){
     });
     data = await res.json().catch(()=>({}));
     if (!res.ok) throw new Error('Claude 錯誤：' + (data.error?.message || res.status));
+    recordUsage('claude', settings.claudeModel || DEFAULTS.claudeModel, data.usage);
     text = (data.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('');
   }
   if (!text) throw new Error('AI 沒有回傳內容');
@@ -380,7 +448,7 @@ async function listModels(){
    狀態
    ============================================================ */
 let notes = [], refs = [];
-const state = { view:'date', date:null, cat:null, q:'' };
+const state = { view:'date', date:null, cat:null, q:'', filterCat:'', open:new Set() };
 async function load(){ notes = await db.all('notes'); refs = await db.all('refs'); }
 const categories = () => {
   const m = new Map(); for (const n of notes) m.set(n.category||'未分類', (m.get(n.category||'未分類')||0)+1);
@@ -429,7 +497,8 @@ async function processAdd(){
       for (const d of imgs){ const id = uid(); await db.put('images', {id, data:d}); imgIds.push(id); }
       for (const n of (out.notes||[])){
         const src = (n.sourceImages||[]).map(i=>imgIds[i]).filter(Boolean);
-        await db.put('notes', { id:uid(), date, createdAt:Date.now(), title:n.title||'未命名筆記', category:(n.category||ctx||'未分類').trim(),
+        const nid = uid(); state.open.add(nid);
+        await db.put('notes', { id:nid, date, createdAt:Date.now(), title:n.title||'未命名筆記', category:(n.category||ctx||'未分類').trim(),
           summary:n.summary||'', points:n.points||[], keywords:n.keywords||[], rawText:n.rawText||'', mine:'',
           imageIds: src.length ? src : imgIds, context:ctx });
         created++;
@@ -459,10 +528,19 @@ function hlBox(n){
   return `<div class="hl-box"><div class="t">⭐ 我的重點（${hls.length}）</div>
     ${hls.map(h=>`<div class="hl hl-${h.color}"><span>${esc(h.text)}</span><button data-act="unhl" data-hid="${h.id}" title="移除這個重點">×</button></div>`).join('')}</div>`;
 }
+const TILE_COLORS = ['#c9a27c','#a98a6d','#8b7aa8','#7d9e8a','#c58a78','#7f98b0','#b39a5c','#a3825f'];
+const catColor = c => { let h=0; for (const ch of String(c)) h = (h*31 + ch.codePointAt(0)) >>> 0; return TILE_COLORS[h % TILE_COLORS.length]; };
 function noteCard(n, {showDate=false}={}){
   const hlMap = new Map((n.highlights||[]).map(h=>[h.text,h]));
-  return `<article class="card" data-id="${n.id}" data-showdate="${showDate?1:0}">
-    <h3>${esc(n.title)}</h3>
+  const nh = (n.highlights||[]).length, first = (n.imageIds||[])[0];
+  const sub = [n.category, showDate ? n.date.slice(5).replace('-','/') : '', (n.keywords||[]).slice(0,2).join('、')].filter(Boolean).join(' · ');
+  return `<article class="entry ${state.open.has(n.id)?'open':''}" data-id="${n.id}" data-showdate="${showDate?1:0}">
+    <div class="entry-head" data-act="toggle">
+      <div class="tile" style="background:${catColor(n.category)}">${first ? `<img data-img="${first}" alt="">` : esc([...(n.category||'筆')][0])}</div>
+      <div class="et"><div class="tt">${esc(n.title)}</div><div class="st">${esc(sub)}</div></div>
+      <div class="er">${nh ? `★${nh}` : ''}<span class="chev">›</span></div>
+    </div>
+    <div class="entry-body">
     <div class="meta">
       <span class="chip" data-cat="${esc(n.category)}">${esc(n.category)}</span>
       ${showDate ? `<span>${fmtDate(n.date)}</span>` : ''}
@@ -481,25 +559,27 @@ function noteCard(n, {showDate=false}={}){
       <button class="btn" data-act="edit">✏️ 編輯</button>
       <button class="btn danger" data-act="delete">🗑 刪除</button>
     </div>
+    </div>
   </article>`;
 }
 
+/* ---------- 列表（依日期分組） ---------- */
+function ledger(list, {desc=true, showDate=false}={}){
+  const dates = [...new Set(list.map(n=>n.date))].sort(); if (desc) dates.reverse();
+  if (!dates.length) return `<div class="ledger"><div class="empty" style="padding:30px">沒有符合的筆記</div></div>`;
+  return `<div class="ledger">${dates.map(d=>{
+    const day = list.filter(n=>n.date===d).sort((a,b)=>a.createdAt-b.createdAt);
+    const stars = day.reduce((s,n)=>s+(n.highlights||[]).length,0);
+    return `<div class="day-h"><span>${fmtDate(d).slice(5)}</span><span class="r">${day.length} 則${stars?` · ★${stars}`:''}
+      <button class="icon-btn" data-act="export-day" data-day="${d}" title="匯出這天">⬇︎</button></span></div>
+      ${day.map(n=>noteCard(n,{showDate})).join('')}`;
+  }).join('')}</div>`;
+}
 /* ---------- 模式一：日期閱覽 ---------- */
 function viewDate(){
-  const list = notes.filter(matchQ);
-  const dates = [...new Set(list.map(n=>n.date))].sort().reverse();
   if (!notes.length) return emptyState();
-  if (!state.date || !dates.includes(state.date)) state.date = dates[0];
-  const day = list.filter(n=>n.date===state.date).sort((a,b)=>a.createdAt-b.createdAt);
-  return `<div class="layout">
-    <aside class="side"><h4>日期</h4>
-      ${dates.map(d=>`<div class="item ${d===state.date?'on':''}" data-date="${d}"><span>${fmtDate(d)}</span><span class="n">${list.filter(n=>n.date===d).length}</span></div>`).join('') || '<div class="notice">沒有符合的筆記</div>'}
-    </aside>
-    <section>
-      ${state.date ? `<div class="section-title"><h2>${fmtDate(state.date)}</h2>
-        <div class="actions" style="margin:0"><button class="btn" data-act="export-day">⬇️ 匯出這天</button></div></div>` : ''}
-      ${day.map(n=>noteCard(n)).join('')}
-    </section></div>`;
+  const list = notes.filter(n=>matchQ(n) && (!state.filterCat || n.category===state.filterCat));
+  return ledger(list, {desc:true});
 }
 
 /* ---------- 模式二：總筆記整理（分類 + 合併） ---------- */
@@ -507,25 +587,18 @@ function viewTopic(){
   if (!notes.length) return emptyState();
   const cats = categories();
   if (!state.cat || !cats.find(c=>c[0]===state.cat)) state.cat = cats[0][0];
-  const inCat = notes.filter(n=>(n.category||'未分類')===state.cat && matchQ(n)).sort((a,b)=>a.date.localeCompare(b.date)||a.createdAt-b.createdAt);
-  return `<div class="layout">
-    <aside class="side"><h4>分類</h4>
-      ${cats.map(([c,k])=>`<div class="item ${c===state.cat?'on':''}" data-cat-item="${esc(c)}"><span>${esc(c)}</span><span class="n">${k}</span></div>`).join('')}
-      <div style="margin-top:10px"><button class="btn" data-act="recat" style="width:100%">🧩 合併相似分類</button></div>
-    </aside>
-    <section>
-      <div class="section-title"><h2>${esc(state.cat)}</h2>
-        <div class="actions" style="margin:0">
-          <button class="btn primary" data-act="merge">✨ AI 合併整理</button>
-          <button class="btn" data-act="export-cat">⬇️ 匯出</button>
-        </div></div>
-      ${(()=>{ const all = inCat.flatMap(n=>(n.highlights||[]).map(h=>({h,n}))); if (!all.length) return '';
-        return `<div class="card"><div class="hl-box" style="margin:0;border:0;padding:0;background:none"><div class="t">⭐ 這個分類的所有重點（${all.length}）</div>
-        ${all.map(({h,n})=>`<div class="hl hl-${h.color}"><span>${esc(h.text)} <small>— ${n.date.slice(5).replace('-','/')}・${esc(n.title)}</small></span></div>`).join('')}</div></div>`; })()}
-      <div id="mergeBox"></div>
-      <h4 style="color:var(--muted);font-weight:600;margin:18px 0 8px">原始筆記（${inCat.length} 則，依日期）</h4>
-      ${inCat.map(n=>noteCard(n,{showDate:true})).join('')}
-    </section></div>`;
+  const inCat = notes.filter(n=>(n.category||'未分類')===state.cat && matchQ(n));
+  const all = inCat.slice().sort((a,b)=>a.date.localeCompare(b.date)).flatMap(n=>(n.highlights||[]).map(h=>({h,n})));
+  return `<div class="section-title"><h2><span class="tile" style="display:inline-grid;width:34px;height:34px;border-radius:11px;font-size:15px;vertical-align:-7px;margin-right:8px;background:${catColor(state.cat)}">${esc([...state.cat][0])}</span>${esc(state.cat)}</h2>
+      <div class="actions" style="margin:0">
+        <button class="btn primary" data-act="merge">✨ AI 合併整理</button>
+        <button class="btn" data-act="export-cat">⬇︎ 匯出</button>
+      </div></div>
+    ${all.length ? `<div class="card"><div class="hl-box" style="margin:0;border:0;padding:0;background:none"><div class="t">⭐ 這個分類的所有重點（${all.length}）</div>
+      ${all.map(({h,n})=>`<div class="hl hl-${h.color}"><span>${esc(h.text)} <small>— ${n.date.slice(5).replace('-','/')}・${esc(n.title)}</small></span></div>`).join('')}</div></div>` : ''}
+    <div id="mergeBox"></div>
+    <div class="sub-h" style="display:flex;justify-content:space-between;align-items:center">原始筆記（${inCat.length} 則）<button class="btn" data-act="recat" style="font-weight:400">🧩 合併相似分類</button></div>
+    ${ledger(inCat, {desc:false, showDate:false})}`;
 }
 const catSig = cat => notes.filter(n=>n.category===cat).map(n=>n.id+':'+(n.updatedAt||n.createdAt)).sort().join('|');
 async function renderMergeBox(){
@@ -760,6 +833,7 @@ function viewSettings(){
     </div>
     <div class="progress" id="sProg"></div>
   </div>
+  ${usageCard()}
   <div class="card">
     <h3>備份與還原</h3>
     <p class="notice">資料存在這個瀏覽器裡。換手機/電腦或清除瀏覽器資料前，請先備份。</p>
@@ -770,6 +844,45 @@ function viewSettings(){
     </div>
     <input type="file" id="restoreFile" accept=".json,application/json" hidden>
     <p class="notice">目前：${notes.length} 則筆記・${categories().length} 個分類・${refs.length} 本教科書</p>
+  </div>`;
+}
+function usageInner(){
+  const u = getUsage(), today = u.days[ptDay()] || {};
+  const main = settings.geminiModel || DEFAULTS.geminiModel, limit = +(settings.rpd?.[main] || 0);
+  const used = today['gemini:'+main]?.req || 0;
+  const k = n => n>=1e6 ? (n/1e6).toFixed(1)+'M' : n>=1000 ? (n/1000).toFixed(1)+'k' : n;
+  const rows = Object.entries(today).sort((a,b)=>b[1].req-a[1].req);
+  const hist = Object.entries(u.days).sort().slice(-7).map(([d,ms])=>[d, Object.values(ms).reduce((s,m)=>s+m.req,0)]);
+  let top;
+  if (limit){
+    const left = Math.max(0, limit-used), pct = Math.min(100, used/limit*100);
+    top = `<div class="quota"><div class="qnum"><b>${left}</b><span>次</span><small>今天估計還能用（${esc(main)}）</small></div>
+      <div class="qbar"><i style="width:${pct}%;${pct>85?'background:var(--warn)':''}"></i></div>
+      <div class="notice">已用 ${used} / ${limit} 次・${hhmm(quotaResetTime())} 重置</div></div>`;
+  } else {
+    top = `<div class="quota"><div class="qnum"><b>${used}</b><span>次</span><small>今天已使用（${esc(main)}）</small></div>
+      <div class="notice">在下方填入每日上限，就能顯示估計剩餘次數。</div></div>`;
+  }
+  return `${top}
+    <table class="utable"><tr><th>今天各模型</th><th>次數</th><th>輸入</th><th>輸出</th></tr>
+    ${rows.map(([key,m])=>`<tr><td>${esc(key.split(':').slice(1).join(':'))}${key.startsWith('claude:')?' <small class="notice">Claude</small>':''}</td><td>${m.req}</td><td>${k(m.inTok)}</td><td>${k(m.outTok)}</td></tr>`).join('')
+      || '<tr><td colspan="4" class="notice">今天還沒有使用</td></tr>'}</table>
+    <div class="notice">輸入/輸出為 tokens 數。每天 ${hhmm(quotaResetTime())}（你的時間）重置，也就是美國太平洋時間午夜。</div>
+    <div class="notice">近 7 天：${hist.map(([d,n])=>`${d.slice(5).replace('-','/')} ${n} 次`).join('・')}</div>
+    ${u.lastLimit ? `<div class="stale">⚠️ 最近一次額度用完：${new Date(u.lastLimit.at).toLocaleString()}（${esc(u.lastLimit.model)}）</div>` : ''}`;
+}
+function usageCard(){
+  const main = settings.geminiModel || DEFAULTS.geminiModel;
+  return `<div class="card">
+    <h3>📊 Gemini 用量與剩餘額度</h3>
+    <p class="notice" style="margin-top:0">Google 沒有提供讓網頁直接查詢「剩餘額度」的方式，所以這裡是網頁自己記錄的用量（只算這台裝置，手機和電腦分開計算）。最準確的數字請看官方頁面。</p>
+    <div id="usageBox">${usageInner()}</div>
+    <label>「${esc(main)}」每日請求上限（RPD，到官方頁面查看後填入）</label>
+    <div class="inline"><input type="text" inputmode="numeric" id="sRpd" value="${settings.rpd?.[main] || ''}" placeholder="例如 250"><button class="btn" data-act="save-rpd">儲存</button></div>
+    <div class="actions">
+      <a class="btn" href="https://aistudio.google.com/rate-limit?timeRange=last-28-days" target="_blank" rel="noopener">查看官方額度頁面 ↗</a>
+      <button class="btn danger" data-act="reset-usage">清除用量紀錄</button>
+    </div>
   </div>`;
 }
 function openSettingsHint(){ state.view='settings'; render(); }
@@ -783,6 +896,10 @@ function emptyState(){
 }
 function render(){
   document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on', b.dataset.v===state.view));
+  const sel = $('#catFilter'), cats = categories();
+  sel.innerHTML = (state.view==='topic' ? '' : '<option value="">全部分類</option>') + cats.map(([c,k])=>`<option value="${esc(c)}">${esc(c)}（${k}）</option>`).join('');
+  sel.value = state.view==='topic' ? (state.cat||cats[0]?.[0]||'') : state.filterCat;
+  sel.hidden = !cats.length || state.view==='refs' || state.view==='settings';
   const app = $('#app');
   app.innerHTML = {date:viewDate, topic:viewTopic, refs:viewRefs, settings:viewSettings}[state.view]();
   hydrateThumbs(app);
@@ -823,6 +940,9 @@ document.addEventListener('click', async e=>{
   const btn = t.closest('[data-act]'); if (!btn) return;
   const card = btn.closest('article[data-id]'); const n = card && notes.find(x=>x.id===card.dataset.id);
   switch (btn.dataset.act){
+    case 'toggle':
+      if (getSelection()?.toString()) break;
+      card.classList.toggle('open'); card.classList.contains('open') ? state.open.add(n.id) : state.open.delete(n.id); break;
     case 'edit': openEdit(n); break;
     case 'star': {
       const text = plain(n.points[+btn.dataset.i]); const ex = (n.highlights||[]).find(h=>h.text===text);
@@ -836,11 +956,16 @@ document.addEventListener('click', async e=>{
     case 'related': findRelated(n, btn); break;
     case 'merge': mergeCategory(btn); break;
     case 'recat': recategorize(btn); break;
-    case 'export-day': download(`筆記_${state.date}.md`, await buildMD(x=>x.date===state.date, `${state.date} 筆記`)); break;
+    case 'export-day': { const d = btn.dataset.day || state.date; download(`筆記_${d}.md`, await buildMD(x=>x.date===d, `${d} 筆記`)); break; }
     case 'export-cat': download(`筆記_${state.cat}.md`, await buildMD(x=>x.category===state.cat, `${state.cat} 筆記`)); break;
     case 'export-all-md': download(`我的筆記_${today()}.md`, await buildMD(()=>true, '我的課堂筆記')); break;
     case 'copy-all-md': await navigator.clipboard.writeText(await buildMD(()=>true,'我的課堂筆記')); toast('已複製，可直接貼到 Gemini Notebook 的「複製的文字」來源'); break;
     case 'add-ref': $('#refFile').click(); break;
+    case 'save-rpd': {
+      const main = settings.geminiModel || DEFAULTS.geminiModel, v = parseInt($('#sRpd').value, 10);
+      settings.rpd ||= {}; if (v > 0) settings.rpd[main] = v; else delete settings.rpd[main];
+      saveSettings(); $('#usageBox').innerHTML = usageInner(); toast('已儲存每日上限'); break; }
+    case 'reset-usage': if (confirm('清除這台裝置的用量紀錄？')){ localStorage.removeItem('dn-usage'); $('#usageBox').innerHTML = usageInner(); } break;
     case 'save-settings': readSettingsForm(); saveSettings(); toast('已儲存設定'); break;
     case 'list-models': readSettingsForm(); $('#sProg').textContent='讀取中…';
       try{ const ms = await listModels(); $('#modelList').innerHTML = ms.map(m=>`<option value="${esc(m)}">`).join('');
@@ -862,6 +987,7 @@ function readSettingsForm(){
 }
 document.addEventListener('change', async e=>{
   const t = e.target;
+  if (t.id==='catFilter'){ if (state.view==='topic') state.cat = t.value; else state.filterCat = t.value; render(); return; }
   if (t.id==='sProvider'){ $('#sGemini').hidden = t.value!=='gemini'; $('#sClaude').hidden = t.value!=='claude'; }
   if (t.id==='file' || t.id==='cam'){ await addFiles([...t.files]); t.value=''; }
   if (t.id==='refFile'){
@@ -973,7 +1099,7 @@ await load(); render();
    版本檢查：有新版時主動詢問要不要更新
    ⚠️ 每次修改並上傳 index.html 時，請把 APP_VERSION 改成新的值
    ============================================================ */
-const APP_VERSION = '2026.11.19-4';
+const APP_VERSION = '2026.11.19-5';
 let lastCheck = 0;
 async function checkUpdate(force=false){
   if (!/^https?:/.test(location.protocol)) return;          // 本機直接開檔案時不檢查
