@@ -107,6 +107,26 @@ input[type=date]::-webkit-date-and-time-value{text-align:left}
 .progress{font-size:13px;color:var(--accent);margin-top:10px;min-height:20px}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:99;max-width:90vw}
 #toast.show{opacity:1}
+/* 重點標記顏色：黃=重點、粉=易錯、綠=補充 */
+.hl-y{background:#ffef9e}.hl-p{background:#ffd6e2}.hl-g{background:#cdeed4}
+@media (prefers-color-scheme:dark){.hl-y{background:#5c4b0e}.hl-p{background:#5a2433}.hl-g{background:#1f4a2b}}
+mark.hl-y,mark.hl-p,mark.hl-g{color:inherit;border-radius:3px;padding:0 1px}
+.hl-box{border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:6px 0 10px;background:var(--bg)}
+.hl-box .t{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:2px;letter-spacing:.04em}
+.hl{display:flex;gap:6px;align-items:flex-start;padding:6px 9px;border-radius:8px;margin:5px 0;font-size:14.5px;font-weight:500;line-height:1.5}
+.hl span{flex:1}
+.hl small{color:var(--muted);font-weight:400}
+.hl button{border:0;background:none;color:var(--muted);cursor:pointer;padding:0 4px;font-size:16px;line-height:1.3}
+li[class^=hl-]{border-radius:6px;padding:1px 5px}
+.star{border:0;background:none;cursor:pointer;color:var(--muted);padding:0 3px;font-size:15px;vertical-align:baseline}
+.star.on{color:#c98f00}
+#selTool{position:fixed;z-index:70;background:var(--ink);border-radius:12px;padding:6px;display:flex;gap:6px;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#selTool[hidden]{display:none}
+#selTool span{color:var(--bg);padding:0 2px 0 4px}
+#selTool button{border:0;border-radius:8px;padding:7px 12px;cursor:pointer;font-size:14px;color:#222;font-weight:600}
+@media (prefers-color-scheme:dark){#selTool button{color:#eee}}
+.legend{font-size:12px;color:var(--muted);margin-top:4px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 3px 0 8px;vertical-align:-1px}
 #updateBar{position:fixed;left:50%;transform:translateX(-50%);top:calc(12px + env(safe-area-inset-top));z-index:60;
   width:min(460px,calc(100vw - 24px));background:var(--card);border:1px solid var(--accent);border-radius:14px;
   box-shadow:0 8px 28px rgba(0,0,0,.18);padding:12px 14px;display:flex;align-items:center;gap:10px}
@@ -138,6 +158,7 @@ pre.raw{white-space:pre-wrap;font-size:12.5px;background:var(--bg);padding:8px;b
 <main id="app"></main>
 <button class="fab" id="fab">＋ 新增筆記</button>
 <div id="toast"></div>
+<div id="selTool" hidden><span>🖍</span><button data-c="y" class="hl-y">重點</button><button data-c="p" class="hl-p">易錯</button><button data-c="g" class="hl-g">補充</button></div>
 <div id="updateBar" hidden>
   <div class="txt">🎉 有新版本可以更新<small id="updateVer"></small></div>
   <button class="btn" id="updLater">稍後</button>
@@ -178,7 +199,9 @@ pre.raw{white-space:pre-wrap;font-size:12.5px;background:var(--bg);padding:8px;b
   <label>摘要</label><textarea id="eSummary" style="min-height:60px"></textarea>
   <label>重點（一行一點）</label><textarea id="ePoints" style="min-height:140px"></textarea>
   <label>關鍵字（逗號分隔）</label><input type="text" id="eKw">
+  <label>⭐ 重點標記（一行一個，會顯示在筆記最上方）</label><textarea id="eHl" style="min-height:70px" placeholder="例如：休克時優先給 epinephrine"></textarea>
   <label>我的補充</label><textarea id="eMine" style="min-height:60px"></textarea>
+  <label>原始辨識文字（可修正 AI 認錯的字）</label><textarea id="eRaw" style="min-height:90px"></textarea>
   <div class="foot">
     <button class="btn" onclick="dlgEdit.close()">取消</button>
     <button class="btn primary" id="btnSaveEdit">儲存</button>
@@ -363,7 +386,7 @@ const categories = () => {
   const m = new Map(); for (const n of notes) m.set(n.category||'未分類', (m.get(n.category||'未分類')||0)+1);
   return [...m.entries()].sort((a,b)=>b[1]-a[1]);
 };
-const matchQ = n => !state.q || [n.title,n.summary,n.category,n.mine,(n.points||[]).join(' '),(n.keywords||[]).join(' '),n.rawText].join(' ').toLowerCase().includes(state.q.toLowerCase());
+const matchQ = n => !state.q || [n.title,n.summary,n.category,n.mine,(n.highlights||[]).map(h=>h.text).join(' '),(n.points||[]).join(' '),(n.keywords||[]).join(' '),n.rawText].join(' ').toLowerCase().includes(state.q.toLowerCase());
 
 /* ============================================================
    1) 拍照 → AI 辨識 → 整理成筆記
@@ -430,19 +453,28 @@ async function hydrateThumbs(root){
     if (d) el.src = d; else el.remove();
   }
 }
+const plain = s => String(s||'').replace(/\*\*|`/g,'').replace(/\s+/g,' ').trim();
+function hlBox(n){
+  const hls = n.highlights||[]; if (!hls.length) return '';
+  return `<div class="hl-box"><div class="t">⭐ 我的重點（${hls.length}）</div>
+    ${hls.map(h=>`<div class="hl hl-${h.color}"><span>${esc(h.text)}</span><button data-act="unhl" data-hid="${h.id}" title="移除這個重點">×</button></div>`).join('')}</div>`;
+}
 function noteCard(n, {showDate=false}={}){
-  return `<article class="card" data-id="${n.id}">
+  const hlMap = new Map((n.highlights||[]).map(h=>[h.text,h]));
+  return `<article class="card" data-id="${n.id}" data-showdate="${showDate?1:0}">
     <h3>${esc(n.title)}</h3>
     <div class="meta">
       <span class="chip" data-cat="${esc(n.category)}">${esc(n.category)}</span>
       ${showDate ? `<span>${fmtDate(n.date)}</span>` : ''}
       ${(n.keywords||[]).map(k=>`<span class="kw">${esc(k)}</span>`).join('')}
     </div>
-    ${n.summary ? `<div class="summary">${esc(n.summary)}</div>` : ''}
-    ${(n.points||[]).length ? `<div class="md"><ul>${n.points.map(p=>`<li>${md(p).replace(/^<p>|<\/p>$/g,'')}</li>`).join('')}</ul></div>` : ''}
-    ${n.mine ? `<div class="ref"><span class="src">我的補充</span><br>${esc(n.mine)}</div>` : ''}
+    ${hlBox(n)}
+    ${n.summary ? `<div class="summary nb">${esc(n.summary)}</div>` : ''}
+    ${(n.points||[]).length ? `<div class="md nb"><ul>${n.points.map((p,i)=>{ const h = hlMap.get(plain(p));
+      return `<li class="${h?'hl-'+h.color:''}">${md(p).replace(/^<p>|<\/p>$/g,'')} <button class="star ${h?'on':''}" data-act="star" data-i="${i}" title="${h?'取消重點':'標成重點'}">${h?'★':'☆'}</button></li>`; }).join('')}</ul></div>` : ''}
+    ${n.mine ? `<div class="ref nb"><span class="src">我的補充</span><br>${esc(n.mine)}</div>` : ''}
     ${(n.imageIds||[]).length ? `<div class="thumbs">${n.imageIds.map(id=>`<img data-img="${id}" alt="原始照片">`).join('')}</div>` : ''}
-    ${n.rawText ? `<details style="margin-top:8px"><summary>查看原始辨識文字</summary><pre class="raw">${esc(n.rawText)}</pre></details>` : ''}
+    ${n.rawText ? `<details style="margin-top:8px"><summary>查看原始辨識文字</summary><pre class="raw nb">${esc(n.rawText)}</pre></details>` : ''}
     <div class="related" id="rel-${n.id}" ${n.related ? '' : 'hidden'}>${n.related ? relatedHTML(n) : ''}</div>
     <div class="actions">
       <button class="btn" data-act="related">🔗 相關知識</button>
@@ -487,6 +519,9 @@ function viewTopic(){
           <button class="btn primary" data-act="merge">✨ AI 合併整理</button>
           <button class="btn" data-act="export-cat">⬇️ 匯出</button>
         </div></div>
+      ${(()=>{ const all = inCat.flatMap(n=>(n.highlights||[]).map(h=>({h,n}))); if (!all.length) return '';
+        return `<div class="card"><div class="hl-box" style="margin:0;border:0;padding:0;background:none"><div class="t">⭐ 這個分類的所有重點（${all.length}）</div>
+        ${all.map(({h,n})=>`<div class="hl hl-${h.color}"><span>${esc(h.text)} <small>— ${n.date.slice(5).replace('-','/')}・${esc(n.title)}</small></span></div>`).join('')}</div></div>`; })()}
       <div id="mergeBox"></div>
       <h4 style="color:var(--muted);font-weight:600;margin:18px 0 8px">原始筆記（${inCat.length} 則，依日期）</h4>
       ${inCat.map(n=>noteCard(n,{showDate:true})).join('')}
@@ -505,10 +540,11 @@ async function mergeCategory(btn){
   const cat = state.cat, list = notes.filter(n=>n.category===cat).sort((a,b)=>a.date.localeCompare(b.date));
   btn.disabled = true; btn.textContent = '整理中…';
   try{
-    const payload = list.map(n=>`### [${n.date}] ${n.title}\n${n.summary}\n${(n.points||[]).map(p=>'- '+p).join('\n')}${n.mine?`\n- (使用者補充) ${n.mine}`:''}`).join('\n\n');
+    const payload = list.map(n=>`### [${n.date}] ${n.title}\n${n.summary}\n${(n.points||[]).map(p=>'- '+p).join('\n')}${n.mine?`\n- (使用者補充) ${n.mine}`:''}${(n.highlights||[]).length?`\n⭐ 使用者標記的重點：${n.highlights.map(h=>h.text).join('；')}`:''}`).join('\n\n');
     const prompt = `以下是使用者在「${cat}」這個分類下，不同日期的課堂筆記。請整合成一份完整、有條理的主題筆記：
 - 依「子主題/概念」重新組織，而不是依日期。
 - 內容相同或相似的重點要合併成一條，不要重複；互相補充的內容要整合在一起。
+- 使用者標記「⭐」的重點一定要保留，並在該條開頭加上 ⭐。
 - 每條重點後面用（MM/DD）標示出自哪幾天的筆記，例如（11/12, 11/19）。
 - 最前面放「## 一句話總覽」，最後放「## 尚待釐清 / 可延伸」列出筆記中模糊或值得深入的地方。
 - 使用 Markdown（## 標題、- 條列、**粗體**），使用${settings.lang}。
@@ -673,7 +709,8 @@ function viewRefs(){
    匯出
    ============================================================ */
 function noteMD(n){
-  return `### ${n.title}\n*${n.date}｜${n.category}*\n\n${n.summary?n.summary+'\n\n':''}${(n.points||[]).map(p=>'- '+p).join('\n')}\n${n.mine?`\n> 我的補充：${n.mine}\n`:''}${(n.keywords||[]).length?`\n關鍵字：${n.keywords.join('、')}\n`:''}`;
+  const hls = n.highlights||[];
+  return `### ${n.title}\n*${n.date}｜${n.category}*\n\n${hls.length?`**⭐ 我的重點**\n${hls.map(h=>'- ⭐ '+h.text).join('\n')}\n\n`:''}${n.summary?n.summary+'\n\n':''}${(n.points||[]).map(p=>'- '+p).join('\n')}\n${n.mine?`\n> 我的補充：${n.mine}\n`:''}${(n.keywords||[]).length?`\n關鍵字：${n.keywords.join('、')}\n`:''}`;
 }
 async function buildMD(filter, title){
   const list = notes.filter(filter).sort((a,b)=>a.date.localeCompare(b.date));
@@ -749,6 +786,7 @@ function render(){
   const app = $('#app');
   app.innerHTML = {date:viewDate, topic:viewTopic, refs:viewRefs, settings:viewSettings}[state.view]();
   hydrateThumbs(app);
+  app.querySelectorAll('article[data-id]').forEach(a=>applyMarks(a, notes.find(x=>x.id===a.dataset.id)));
   if (state.view==='topic' && notes.length) renderMergeBox();
   $('#fab').hidden = state.view==='settings';
 }
@@ -758,15 +796,17 @@ let editing = null;
 function openEdit(n){
   editing = n;
   $('#eTitle').value=n.title; $('#eCat').value=n.category; $('#eDate').value=n.date; $('#eSummary').value=n.summary||'';
-  $('#ePoints').value=(n.points||[]).join('\n'); $('#eKw').value=(n.keywords||[]).join(', '); $('#eMine').value=n.mine||'';
+  $('#ePoints').value=(n.points||[]).join('\n'); $('#eKw').value=(n.keywords||[]).join(', '); $('#eMine').value=n.mine||''; $('#eRaw').value=n.rawText||''; $('#eHl').value=(n.highlights||[]).map(h=>h.text).join('\n');
   $('#catList').innerHTML = categories().map(([c])=>`<option value="${esc(c)}">`).join('');
   dlgEdit.showModal();
 }
 $('#btnSaveEdit').onclick = async ()=>{
   const n = editing; if (!n) return;
   Object.assign(n, { title:$('#eTitle').value.trim()||'未命名筆記', category:$('#eCat').value.trim()||'未分類', date:$('#eDate').value||n.date,
-    summary:$('#eSummary').value.trim(), points:$('#ePoints').value.split('\n').map(s=>s.replace(/^\s*[-•*]\s*/,'').trim()).filter(Boolean),
-    keywords:$('#eKw').value.split(/[,，、]/).map(s=>s.trim()).filter(Boolean), mine:$('#eMine').value.trim(), updatedAt:Date.now() });
+    summary:$('#eSummary').value.trim(), points:$('#ePoints').value.split('\n').map(s=>s.replace(/^\s*[-•*]\s+(?=\S)/,'').trim()).filter(Boolean),
+    keywords:$('#eKw').value.split(/[,，、]/).map(s=>s.trim()).filter(Boolean), mine:$('#eMine').value.trim(), rawText:$('#eRaw').value.trim(), updatedAt:Date.now(),
+    highlights: [...new Set($('#eHl').value.split('\n').map(s=>s.trim()).filter(Boolean))]
+      .map(t => (n.highlights||[]).find(h=>h.text===t) || {id:uid(), text:t, color:'y', src:'edit', at:Date.now()}) });
   await db.put('notes', n); dlgEdit.close(); await load(); render(); toast('已儲存');
 };
 
@@ -784,6 +824,11 @@ document.addEventListener('click', async e=>{
   const card = btn.closest('article[data-id]'); const n = card && notes.find(x=>x.id===card.dataset.id);
   switch (btn.dataset.act){
     case 'edit': openEdit(n); break;
+    case 'star': {
+      const text = plain(n.points[+btn.dataset.i]); const ex = (n.highlights||[]).find(h=>h.text===text);
+      if (ex) await removeHighlight(n, ex.id); else await addHighlight(n, text, 'y', 'point');
+      break; }
+    case 'unhl': await removeHighlight(n, btn.dataset.hid); break;
     case 'delete':
       if (confirm(`刪除「${n.title}」？`)){ await db.del('notes', n.id);
         for (const id of n.imageIds||[]) if (!notes.some(o=>o.id!==n.id && (o.imageIds||[]).includes(id))) await db.del('images', id);
@@ -841,6 +886,76 @@ document.addEventListener('input', e=>{
   }
 });
 
+/* ============================================================
+   重點標記：選取文字 → 浮動工具列；或按每條重點旁的 ☆
+   ============================================================ */
+async function addHighlight(n, text, color='y', src='sel'){
+  text = text.replace(/\s+/g,' ').trim(); if (!text) return;
+  n.highlights ||= [];
+  const ex = n.highlights.find(h=>h.text===text);
+  if (ex){ ex.color = color; } else n.highlights.push({id:uid(), text, color, src, at:Date.now()});
+  n.updatedAt = Date.now(); await db.put('notes', n); rerenderCard(n);
+  toast(ex ? '已更新重點顏色' : '⭐ 已加到筆記最上方');
+}
+async function removeHighlight(n, hid){
+  n.highlights = (n.highlights||[]).filter(h=>h.id!==hid); n.updatedAt = Date.now();
+  await db.put('notes', n); rerenderCard(n);
+}
+function rerenderCard(n){
+  if (state.view==='topic'){ const y = scrollY; render(); scrollTo(0,y); return; } // 總整理頁上方有彙整，整頁重畫
+  const el = document.querySelector(`article[data-id="${n.id}"]`); if (!el) return render();
+  el.outerHTML = noteCard(n, {showDate: el.dataset.showdate==='1'});
+  const neu = document.querySelector(`article[data-id="${n.id}"]`); hydrateThumbs(neu); applyMarks(neu, n);
+}
+// 在筆記內文中，把標記過的文字上色
+function applyMarks(article, n){
+  const hls = (n?.highlights||[]).filter(h=>h.text.length>=2).sort((a,b)=>b.text.length-a.text.length);
+  if (!hls.length) return;
+  for (const root of article.querySelectorAll('.nb')){
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (const node of nodes){
+      if (node.parentElement.closest('mark,button,li[class^=hl-]')) continue;
+      let parts = [{t:node.nodeValue}];
+      for (const h of hls) parts = parts.flatMap(p=>{
+        if (p.h || !p.t.includes(h.text)) return [p];
+        const out = []; p.t.split(h.text).forEach((seg,i,arr)=>{ if (seg) out.push({t:seg}); if (i<arr.length-1) out.push({t:h.text, h}); });
+        return out;
+      });
+      if (parts.length===1 && !parts[0].h) continue;
+      const frag = document.createDocumentFragment();
+      for (const p of parts){ if (p.h){ const m=document.createElement('mark'); m.className='hl-'+p.h.color; m.textContent=p.t; frag.append(m); } else frag.append(p.t); }
+      node.replaceWith(frag);
+    }
+  }
+}
+let selInfo = null, selTimer;
+function updateSelTool(){
+  const tool = $('#selTool'), sel = getSelection();
+  const hide = () => { tool.hidden = true; selInfo = null; };
+  if (!sel || !sel.rangeCount || sel.isCollapsed) return hide();
+  const range = sel.getRangeAt(0); let el = range.commonAncestorContainer; if (el.nodeType!==1) el = el.parentElement;
+  const art = el?.closest('article[data-id]');
+  if (!art || el.closest('.actions,.hl-box,.meta,h3,.related')) return hide();
+  const text = sel.toString().replace(/\s+/g,' ').trim();
+  if (text.length<2 || text.length>400) return hide();
+  selInfo = {id:art.dataset.id, text};
+  tool.hidden = false;
+  const r = range.getBoundingClientRect(), w = tool.offsetWidth, h = tool.offsetHeight;
+  let top = r.bottom + 14; if (top + h > innerHeight - 10) top = Math.max(10, r.top - h - 14); // iPhone 的系統選單在上方，工具列放下方
+  tool.style.top = top + 'px';
+  tool.style.left = Math.min(Math.max(10, r.left + r.width/2 - w/2), innerWidth - w - 10) + 'px';
+}
+document.addEventListener('selectionchange', ()=>{ clearTimeout(selTimer); selTimer = setTimeout(updateSelTool, 150); });
+addEventListener('scroll', ()=>{ if (!$('#selTool').hidden) updateSelTool(); }, {passive:true});
+$('#selTool').addEventListener('pointerdown', async e=>{
+  e.preventDefault(); // 保留選取狀態
+  const b = e.target.closest('button[data-c]'); if (!b || !selInfo) return;
+  const {id, text} = selInfo; const n = notes.find(x=>x.id===id);
+  getSelection().removeAllRanges(); $('#selTool').hidden = true; selInfo = null;
+  if (n) await addHighlight(n, text, b.dataset.c, 'sel');
+});
+
 // 新增筆記視窗
 $('#fab').onclick = ()=>{ $('#addDate').value = today(); $('#addProg').textContent=''; dlgAdd.showModal(); };
 $('#drop').onclick = ()=> $('#file').click();
@@ -858,7 +973,7 @@ await load(); render();
    版本檢查：有新版時主動詢問要不要更新
    ⚠️ 每次修改並上傳 index.html 時，請把 APP_VERSION 改成新的值
    ============================================================ */
-const APP_VERSION = '2026.11.19-3';
+const APP_VERSION = '2026.11.19-4';
 let lastCheck = 0;
 async function checkUpdate(force=false){
   if (!/^https?:/.test(location.protocol)) return;          // 本機直接開檔案時不檢查
